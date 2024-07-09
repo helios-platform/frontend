@@ -1,30 +1,23 @@
 import './App.css'
-import { useState } from 'react'
-import { Resizable } from './components/Resizable'
-import { Nav } from './components/Nav'
+// import { useState } from 'react'
+import SideNav from './components/SideNav'
+import SQLConsole from './components/SQLConsole'
+
 
 function App() {
-  const [ isCollapsed, setIsCollapsed ] = useState(false)
-  const [ links, setLinks ] = useState([
-    {title: 'SQL Console'},
-    {title: 'Add Data Source'}
-  ])
-  
-  // interface NavProps {
-  //   isCollapsed: boolean
-  //   links: {
-  //     title: string
-  //     label?: string
-  //     icon: LucideIcon
-  //     variant: "default" | "ghost"
-  //   }[]
-  // }
-  
 
   return (
     <>
-      <Nav isCollapsed={isCollapsed} links={links} />
-      {/* <Resizable /> */}
+      <div className="w-screen"> 
+        <SideNav />
+        
+        {/* Main container div*/}
+        <div className="lg:pl-72 py-10" >
+            <div className="px-4 sm:px-6 lg:px-8">
+              <SQLConsole />
+            </div>
+        </div>
+      </div>
     </>
   )
 }
