@@ -3,6 +3,7 @@ import {
   HomeIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline'
+import { useState } from 'react';
 
 import {
   Link
@@ -29,6 +30,8 @@ const teams = [
 ]
 
 const SideNav = () => {
+  const [selectedPage, setSelectedPage] = useState('/sql-dashboard')
+
   return ( 
     <>
       {/* Static sidebar for desktop */}
@@ -48,9 +51,9 @@ const SideNav = () => {
                 <ul role="list" className="-mx-2 space-y-1">
                   {navigation.map((item) => (
                     <li key={item.name}>
-                      <Link to={item.to}
+                      <Link to={item.to} onClick={()=>setSelectedPage(item.to)}
                         className={classNames(
-                          item.current
+                          item.to === selectedPage
                             ? 'bg-indigo-700 text-white'
                             : 'text-indigo-200 hover:bg-indigo-700 hover:text-white',
                           'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
