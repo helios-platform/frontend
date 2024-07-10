@@ -4,13 +4,17 @@ import {
   UsersIcon,
 } from '@heroicons/react/24/outline'
 
+import {
+  Link
+} from "react-router-dom";
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 const navigation = [
-  { name: 'SQL Dashboard', href: '#', icon: HomeIcon, current: true },
-  { name: 'Add Data Source', href: '#', icon: UsersIcon, current: false },
+  { name: 'SQL Dashboard', to: '/sql-dashboard', icon: HomeIcon, current: true },
+  { name: 'Add Data Source', to: '/add-datasource', icon: UsersIcon, current: false },
   // { name: 'Projects', href: '#', icon: FolderIcon, current: false },
   // { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
   // { name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false },
@@ -44,8 +48,7 @@ const SideNav = () => {
                 <ul role="list" className="-mx-2 space-y-1">
                   {navigation.map((item) => (
                     <li key={item.name}>
-                      <a
-                        href={item.href}
+                      <Link to={item.to}
                         className={classNames(
                           item.current
                             ? 'bg-indigo-700 text-white'
@@ -61,7 +64,7 @@ const SideNav = () => {
                           )}
                         />
                         {item.name}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>
