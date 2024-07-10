@@ -3,14 +3,19 @@ import {
   HomeIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline'
+import { useState } from 'react';
+
+import {
+  Link
+} from "react-router-dom";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 const navigation = [
-  { name: 'SQL Dashboard', href: '#', icon: HomeIcon, current: true },
-  { name: 'Add Data Source', href: '#', icon: UsersIcon, current: false },
+  { name: 'SQL Dashboard', to: '/sql-dashboard', icon: HomeIcon, current: true },
+  { name: 'Add Data Source', to: '/add-datasource', icon: UsersIcon, current: false },
   // { name: 'Projects', href: '#', icon: FolderIcon, current: false },
   // { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
   // { name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false },
@@ -25,6 +30,8 @@ const teams = [
 ]
 
 const SideNav = () => {
+  const [selectedPage, setSelectedPage] = useState('/sql-dashboard')
+
   return ( 
     <>
       {/* Static sidebar for desktop */}
@@ -44,10 +51,9 @@ const SideNav = () => {
                 <ul role="list" className="-mx-2 space-y-1">
                   {navigation.map((item) => (
                     <li key={item.name}>
-                      <a
-                        href={item.href}
+                      <Link to={item.to} onClick={()=>setSelectedPage(item.to)}
                         className={classNames(
-                          item.current
+                          item.to === selectedPage
                             ? 'bg-indigo-700 text-white'
                             : 'text-indigo-200 hover:bg-indigo-700 hover:text-white',
                           'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
@@ -61,7 +67,7 @@ const SideNav = () => {
                           )}
                         />
                         {item.name}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>

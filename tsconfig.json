@@ -11,6 +11,7 @@
   "compilerOptions": {
     // ...
     "baseUrl": ".",
+    "types": ["@testing-library/jest-dom/vitest", "vitest/globals"],
     "paths": {
       "@/*": ["./src/*"]
     }
