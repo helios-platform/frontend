@@ -8,6 +8,7 @@ const getDatabases = async () => {
     return response.data;
   } catch (error) {
     console.error('Error in getDatabases: ', error)
+    return {}
   }
 
 };

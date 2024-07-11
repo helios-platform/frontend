@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import queryService from "../services/api";
 import { Table } from "./Table";
 
@@ -14,24 +14,31 @@ const SQLConsole = () => {
     cols: [],
     rows: [],
   });
+  const isFetchingRef = useRef(false);
 
   useEffect(() => {
+    console.log('Effect 1')
     const fetchInstanceInfo = async () => {
+      if (isFetchingRef.current) return; // Prevent duplicate requests
+      isFetchingRef.current = true;
+
       const data = await queryService.getDatabases();
       setInstanceInfo(data);
       setSelectedInfo(() => {
         const newState = {
           database: "default",
-          tableOptions: data["default"] || [],
-          table: data["default"] ? data["default"][0] : null,
+          tableOptions: data ? data["default"] || [] : [],
+          table: data ? (data["default"] ? data["default"][0] : null) : null,
         };
         return newState;
       });
+      isFetchingRef.current = false
     };
     fetchInstanceInfo();
   }, []);
 
   useEffect(() => {
+    console.log('Effect 2')
     const fetchTableData = async () => {
       if (selectedInfo.database && selectedInfo.table) {
         const { cols, rows } = await queryService.executeQuery(
@@ -65,15 +72,15 @@ const SQLConsole = () => {
       table: firstTable,
     });
 
-    if (firstTable) {
-      const { cols, rows } = await queryService.executeQuery(
-        `SELECT * FROM ${database}.${firstTable} LIMIT 20`
-      );
-      console.log({cols, rows, firstTable, database})
-      setTableInfo({ cols, rows });
-    } else {
-      setTableInfo({ cols: [], rows: [] });
-    }
+    // if (firstTable) {
+    //   const { cols, rows } = await queryService.executeQuery(
+    //     `SELECT * FROM ${database}.${firstTable} LIMIT 20`
+    //   );
+    //   console.log({cols, rows, firstTable, database})
+    //   setTableInfo({ cols, rows });
+    // } else {
+    //   setTableInfo({ cols: [], rows: [] });
+    // }
   };
 
   const handleTableSelect = async (e) => {
@@ -106,6 +113,7 @@ const SQLConsole = () => {
     setQuery("");
   };
 
+  console.log({instanceInfo})
   const databaseOptions = Object.keys(instanceInfo).map((database) => (
     <option key={database} value={database}>
       {database}
