@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import queryService from "../services/api";
-import { Table } from "./Table";
+import { DataTable } from "./dataTable/DataTable";
+import { columns } from "./dataTable/columns"
 
 const SQLConsole = () => {
   const [instanceInfo, setInstanceInfo] = useState({});
@@ -51,39 +52,18 @@ const SQLConsole = () => {
     fetchTableData();
   }, [selectedInfo.database, selectedInfo.table]);
 
-  // const handleDatabaseSelect = (e) => {
-  //   const database = e.target.value
-  //   const newSelectedInfo = {
-  //     database,
-  //     tableOptions: instanceInfo[database] || [],
-  //     table: instanceInfo[database] ? instanceInfo[database][0] : null
-  //   }
-  //   setSelectedInfo(newSelectedInfo)
-  // }
-
-  const handleDatabaseSelect = async (e) => {
-    const database = e.target.value;
-    const tableOptions = instanceInfo[database] || [];
-    const firstTable = tableOptions[0] || null;
-
-    setSelectedInfo({
+  const handleDatabaseSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const database = e.target.value
+    const newSelectedInfo = {
       database,
-      tableOptions,
-      table: firstTable,
-    });
+      tableOptions: instanceInfo[database] || [],
+      table: instanceInfo[database] ? instanceInfo[database][0] : null
+    }
+    setSelectedInfo(newSelectedInfo)
+  }
 
-    // if (firstTable) {
-    //   const { cols, rows } = await queryService.executeQuery(
-    //     `SELECT * FROM ${database}.${firstTable} LIMIT 20`
-    //   );
-    //   console.log({cols, rows, firstTable, database})
-    //   setTableInfo({ cols, rows });
-    // } else {
-    //   setTableInfo({ cols: [], rows: [] });
-    // }
-  };
 
-  const handleTableSelect = async (e) => {
+  const handleTableSelect = async (e: React.SyntheticEvent) => {
     const table = e.target.value;
     setSelectedInfo((prevState) => {
       const newState = {
@@ -92,16 +72,9 @@ const SQLConsole = () => {
       };
       return newState;
     });
-
-    // const { cols, rows } = await queryService.executeQuery(
-    //   { query: `SELECT * FROM ${selectedInfo.database}.${table}` }
-    // )
-    // setTableInfo(prevState => {
-    //   return { ...prevState, cols, rows }
-    // })
   };
 
-  const handleQueryText = async (e) => {
+  const handleQueryText = async (e: React.SyntheticEvent) => {
     setQuery(e.target.value);
   };
 
@@ -113,7 +86,6 @@ const SQLConsole = () => {
     setQuery("");
   };
 
-  console.log({instanceInfo})
   const databaseOptions = Object.keys(instanceInfo).map((database) => (
     <option key={database} value={database}>
       {database}
@@ -125,6 +97,8 @@ const SQLConsole = () => {
       {table}
     </option>
   ));
+
+  const formattedColumns = columns(tableInfo.cols)
 
   return (
     <>
@@ -200,11 +174,7 @@ const SQLConsole = () => {
                 Table Visual
               </label>
               <div id="table-visual">
-                {/* {tableInfo.rows.length ? (
-                  <Table cols={tableInfo.cols} rows={tableInfo.rows} />
-                ) : (
-                  <span className="mt-1 block w-full h-48 border border-gray-300 rounded-md bg-gray-50"></span>
-                )} */}
+                {tableInfo.rows.length !== 0 && tableInfo.cols.length !== 0 && <DataTable columns={formattedColumns} data={tableInfo.rows} ></DataTable>}
               </div>
             </div>
           </div>

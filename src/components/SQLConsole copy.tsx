@@ -1,121 +1,130 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import queryService from "../services/api";
-import { Table } from "./Table"
+import { Table } from "./Table";
 
 const SQLConsole = () => {
-  const [databaseTableMap, setDatabaseTableMap] = useState({});
+  const [instanceInfo, setInstanceInfo] = useState({});
   const [selectedInfo, setSelectedInfo] = useState({
     database: "default",
     tableOptions: [],
     table: null,
   });
-  const [ tableInfo, setTableInfo ] = useState({
+  const [query, setQuery] = useState("");
+  const [tableInfo, setTableInfo] = useState({
     cols: [],
-    rows: []
-  })
+    rows: [],
+  });
+  const isFetchingRef = useRef(false);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const data = await queryService.getDatabases();
-        console.log({ data });
-        setDatabaseTableMap(data);
-        setSelectedInfo(() => {
-          const newState = {
-            database: "default",
-            tableOptions: data["default"] || [],
-            table: data["default"] ? data["default"][0] : null,
-          };
-          return newState;
-        });
-      } catch (error) {
-        /*
-        "Attempt to execute concurrent queries within the same session.Please use a separate client instance per thread/process."
-        */
-      }
-    })();
-    // const fetchInstanceInfo = async () => {
-    //   const data = await queryService.getDatabases()
-    //   setInstanceInfo(data)
-    //   setSelectedInfo(() => {
-    //     const newState = {
-    //       database: 'default',
-    //       tableOptions: data['default'] || [],
-    //       table: data['default'] ? data['default'][0] : null
-    //     }
-    //     return newState
-    //   })
-    // }
-    // fetchInstanceInfo()
+    console.log('Effect 1')
+    const fetchInstanceInfo = async () => {
+      if (isFetchingRef.current) return; // Prevent duplicate requests
+      isFetchingRef.current = true;
+
+      const data = await queryService.getDatabases();
+      setInstanceInfo(data);
+      setSelectedInfo(() => {
+        const newState = {
+          database: "default",
+          tableOptions: data ? data["default"] || [] : [],
+          table: data ? (data["default"] ? data["default"][0] : null) : null,
+        };
+        return newState;
+      });
+      isFetchingRef.current = false
+    };
+    fetchInstanceInfo();
   }, []);
 
   useEffect(() => {
+    console.log('Effect 2')
     const fetchTableData = async () => {
       if (selectedInfo.database && selectedInfo.table) {
         const { cols, rows } = await queryService.executeQuery(
           `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table} LIMIT 20`
         );
-        console.log('setting table cols rows:', { cols, rows });
-        setTableInfo({ cols, rows })
+        setTableInfo({ cols, rows });
       }
     };
 
     fetchTableData();
   }, [selectedInfo.database, selectedInfo.table]);
-  /*
-  Populate dropdowns
-  - Make them work
-  Import table component from proto
 
-  */
-  const handleDatabaseSelect = async (e) => {
-    const database = e.target.value;
-    const tableOptions = databaseTableMap[database] || [];
-    const firstTable = tableOptions[0] || null;
-
-    setSelectedInfo({
+  const handleDatabaseSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const database = e.target.value
+    const newSelectedInfo = {
       database,
-      tableOptions,
-      table: firstTable,
-    });
-
-    if (firstTable) {
-      const { cols, rows } = await queryService.executeQuery(
-        `SELECT * FROM ${database}.${firstTable} LIMIT 20`,
-      );
-      setTableInfo({ cols, rows });
-    } else {
-      setTableInfo({ cols: [], rows: [] });
+      tableOptions: instanceInfo[database] || [],
+      table: instanceInfo[database] ? instanceInfo[database][0] : null
     }
-  };
-
-  const handleTableSelect = async (e) => {
-    const table = e.target.value
-    setSelectedInfo(prevState => {
-      const newState = {
-        ...prevState,
-        table: table
-      }
-      return newState
-    })
-
-    const { cols, rows } = await queryService.executeQuery(
-      `SELECT * FROM ${selectedInfo.database}.${table}`
-    )
-    setTableInfo(prevState => {
-      return { ...prevState, cols, rows }
-    })
+    setSelectedInfo(newSelectedInfo)
   }
 
-  const databaseOptions = Object.keys(databaseTableMap).map((database) => (
+  // const handleDatabaseSelect = async (e) => {
+  //   const database = e.target.value;
+  //   const tableOptions = instanceInfo[database] || [];
+  //   const firstTable = tableOptions[0] || null;
+
+  //   setSelectedInfo({
+  //     database,
+  //     tableOptions,
+  //     table: firstTable,
+  //   });
+
+  //   // if (firstTable) {
+  //   //   const { cols, rows } = await queryService.executeQuery(
+  //   //     `SELECT * FROM ${database}.${firstTable} LIMIT 20`
+  //   //   );
+  //   //   console.log({cols, rows, firstTable, database})
+  //   //   setTableInfo({ cols, rows });
+  //   // } else {
+  //   //   setTableInfo({ cols: [], rows: [] });
+  //   // }
+  // };
+
+  const handleTableSelect = async (e: React.SyntheticEvent) => {
+    const table = e.target.value;
+    setSelectedInfo((prevState) => {
+      const newState = {
+        ...prevState,
+        table: table,
+      };
+      return newState;
+    });
+
+    // const { cols, rows } = await queryService.executeQuery(
+    //   { query: `SELECT * FROM ${selectedInfo.database}.${table}` }
+    // )
+    // setTableInfo(prevState => {
+    //   return { ...prevState, cols, rows }
+    // })
+  };
+
+  const handleQueryText = async (e: React.SyntheticEvent) => {
+    setQuery(e.target.value);
+  };
+
+  const handleRunQuery = async () => {
+    const { cols, rows } = await queryService.executeQuery(query);
+    setTableInfo((prevState) => {
+      return { ...prevState, cols, rows };
+    });
+    setQuery("");
+  };
+
+  console.log({instanceInfo})
+  const databaseOptions = Object.keys(instanceInfo).map((database) => (
     <option key={database} value={database}>
       {database}
     </option>
   ));
 
-  const tableOptions = selectedInfo.tableOptions.map(table => (
-    <option key={table} value={table}>{table}</option>
-  ))
+  const tableOptions = selectedInfo.tableOptions.map((table) => (
+    <option key={table} value={table}>
+      {table}
+    </option>
+  ));
 
   return (
     <>
@@ -125,7 +134,7 @@ const SQLConsole = () => {
             <div>
               <label
                 htmlFor="databases"
-                className="block text-sm font-medium text-gray-700 text-left ml-1"
+                className="block text-sm font-medium text-gray-700"
               >
                 Databases
               </label>
@@ -142,7 +151,7 @@ const SQLConsole = () => {
             <div>
               <label
                 htmlFor="tables"
-                className="block text-sm font-medium text-gray-700 text-left ml-1"
+                className="block text-sm font-medium text-gray-700"
               >
                 Tables
               </label>
@@ -151,14 +160,16 @@ const SQLConsole = () => {
                 name="tables"
                 className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                 onChange={handleTableSelect}
-                value={selectedInfo.table || ''}
+                value={selectedInfo.table || ""}
               >
                 {tableOptions}
-                
               </select>
             </div>
             <div className="col-span-2 flex justify-end items-start">
-              <button className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md">
+              <button
+                className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md"
+                onClick={handleRunQuery}
+              >
                 Run
               </button>
             </div>
@@ -177,8 +188,8 @@ const SQLConsole = () => {
                 rows="4"
                 className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                 placeholder="Write query..."
-                // value=''
-                // onChange={}
+                value={query}
+                onChange={handleQueryText}
               ></textarea>
             </div>
             <div>
@@ -189,10 +200,11 @@ const SQLConsole = () => {
                 Table Visual
               </label>
               <div id="table-visual">
-                {tableInfo.rows.length ? 
-                    <Table cols={tableInfo.cols} rows={tableInfo.rows}/> 
-                    : <span className="mt-1 block w-full h-48 border border-gray-300 rounded-md bg-gray-50"></span>
-                  }
+                {tableInfo.rows.length ? (
+                  <Table cols={tableInfo.cols} rows={tableInfo.rows} />
+                ) : (
+                  <span className="mt-1 block w-full h-48 border border-gray-300 rounded-md bg-gray-50"></span>
+                )}
               </div>
             </div>
           </div>
