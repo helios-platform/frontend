@@ -1,6 +1,11 @@
 import { useReactTable, getCoreRowModel, flexRender } from '@tanstack/react-table'
 
-export const Table = ({ cols, rows }) => {
+interface TableProps {
+  cols: string[],
+  rows: any[]
+}
+
+export const Table = ({ cols, rows }: TableProps) => {
   const columns = cols.map(col => ({
       header: col,
       accessorKey: col.toLowerCase(),

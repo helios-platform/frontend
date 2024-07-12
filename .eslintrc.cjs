@@ -15,4 +15,9 @@ module.exports = {
       { allowConstantExport: true },
     ],
   },
+  settings: {
+    'import/resolver': {
+      typescript: {}
+    }
+  }
 }
