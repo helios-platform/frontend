@@ -1,11 +1,14 @@
 import './App.css'
-// import { useState } from 'react'
+import SourcesHomePage from './components/SourcesHomePage';
 import SideNav from './components/SideNav'
 import SQLConsole from './components/SQLConsole'
+import CreateNewSource from './components/CreateNewSource';
+
 import {
   Switch,
   Route
 } from "react-router-dom";
+import InputSourceDetails from './components/InputSourceDetails';
 
 
 function App() {
@@ -22,9 +25,18 @@ function App() {
                 <Route path="/sql-dashboard">
                   <SQLConsole />
                 </Route>
-                <Route path="/add-datasource">
-                  <p>Route worked</p>
+                <Route path="/datasource-dashboard">
+                  <SourcesHomePage />
                 </Route>
+                <Route path="/create-source">
+                  <CreateNewSource />
+                </Route>
+                {/* <Route path="/input-source-details">
+                  <InputSourceDetails />
+                </Route>
+                <Route path="/input-source-details">
+                  <InputSourceDetails />
+                </Route> */}
               </Switch>
             </div>
         </div>
