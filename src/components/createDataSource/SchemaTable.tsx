@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import { useFinalizedSchema } from "../../contexts/FinalizedSchemaContext";
 
 const dataTypeOptions = [
   'String', 'Int', 'Float', 'Date', 'DateTime', 'UUID', 'Bool',
@@ -8,32 +9,24 @@ const dataTypeOptions = [
   'Date32', 'DateTime32', 'DateTime64', 'IPv4', 'IPv6', 'Int8'
 ];
 
-const initialData = [
-  { name: 'event_timestamp', type: 'DateTime', defaultValue: '', nullable: false },
-  { name: 'event_type', type: 'String', defaultValue: '', nullable: false },
-  { name: 'page_url', type: 'String', defaultValue: '', nullable: false },
-  { name: 'product_id', type: 'Int64', defaultValue: '', nullable: false },
-  { name: 'session_id', type: 'String', defaultValue: '', nullable: false },
-  { name: 'user_id', type: 'Int64', defaultValue: '', nullable: false }
-];
 
-const TableComponent = () => {
-  const [data, setData] = useState(initialData);
+const SchemaTable = () => {
+  const { finalizedSchema, setFinalizedSchema } = useFinalizedSchema()
 
-  const handleChange = (index, field, value) => {
-    const newData = data.map((row, i) => 
+  const handleChange = (index: number, field: string, value: string) => {
+    const newSchema = finalizedSchema.map((row, i) =>
       i === index ? { ...row, [field]: value } : row
     );
-    setData(newData);
+    setFinalizedSchema(newSchema);
   };
 
-  const handleDelete = (index) => {
-    setData(data.filter((_, i) => i !== index));
-  };
+  // const handleDelete = (index) => {
+  //   setData(data.filter((_, i) => i !== index));
+  // };
 
-  const handleAdd = () => {
-    setData([...data, { name: '', type: 'String', defaultValue: '', nullable: false }]);
-  };
+  // const handleAdd = () => {
+  //   setData([...data, { name: '', type: 'String', defaultValue: '', nullable: false }]);
+  // };
 
   return (
     <div>
@@ -42,13 +35,13 @@ const TableComponent = () => {
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Default value</th>
+            {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Default value</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nullable</th>
-            <th className="px-6 py-3"></th>
+            <th className="px-6 py-3"></th> */}
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {data.map((row, index) => (
+          {finalizedSchema.map((row, index) => (
             <tr key={index}>
               <td className="px-6 py-4 whitespace-nowrap">
                 <input
@@ -72,44 +65,45 @@ const TableComponent = () => {
                   ))}
                 </select>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              {/* <td className="px-6 py-4 whitespace-nowrap">
                 <input
                   type="text"
                   value={row.defaultValue}
                   onChange={(e) => handleChange(index, 'defaultValue', e.target.value)}
                   className="border border-gray-300 p-2 rounded-md w-full"
                 />
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              </td> */}
+              {/* TODO: primary keys cannot be nullable */}
+              {/* <td className="px-6 py-4 whitespace-nowrap">
                 <input
                   type="checkbox"
                   checked={row.nullable}
                   onChange={(e) => handleChange(index, 'nullable', e.target.checked)}
                   className="form-checkbox h-5 w-5 text-blue-600"
                 />
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              </td> */}
+              {/* <td className="px-6 py-4 whitespace-nowrap">
                 <button 
                   onClick={() => handleDelete(index)}
                   className="text-red-600 hover:text-red-900"
                 >
                   Delete
                 </button>
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>
       </table>
-      <div className="mt-4">
+      {/* <div className="mt-4">
         <button 
           onClick={handleAdd}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Add Row
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
 
-export default TableComponent;
+export default SchemaTable;

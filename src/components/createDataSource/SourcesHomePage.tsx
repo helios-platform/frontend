@@ -1,5 +1,5 @@
-import { Button } from "../components/ui/button"
-import { Table } from "./Table"
+import { Button } from "../ui/button"
+import { Table } from "../Table"
 
 import {
   Link

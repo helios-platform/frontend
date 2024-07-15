@@ -1,17 +1,32 @@
+import { useState } from 'react';
+import { useIntegration } from '../../contexts/IntegrationContext';
+
 interface inputSourceDetailsProps {
   isActive: boolean;
   onClickBack: () => void;
-  onClickNext: () => void;
+  onAuthenticate: (accessKey: string, secretKey: string) => Promise<void>;
 }
 
 const InputSourceDetails = ({
   isActive,
   onClickBack,
-  onClickNext,
+  onAuthenticate,
 }: inputSourceDetailsProps) => {
+  const { integrationName, setIntegrationName } = useIntegration(); 
+  const [ accessKey, setAccessKey ] = useState('');
+  // TODO: encrypt user secretKey or use AWS secrets manager
+  const [ secretKey, setSecretKey ] = useState('');
+
   return (
     <>
-      <div className="block w-[52rem]">
+      <form 
+        method='POST'
+        className="block w-[52rem]"
+        onSubmit={(e) => {
+          e.preventDefault()
+          onAuthenticate(accessKey, secretKey)
+        }}
+      >
         <h4 className="text-base text-left text-indigo-600 mb-2 pt-2">
           Setup Connection
         </h4>
@@ -31,6 +46,8 @@ const InputSourceDetails = ({
                   name="integrationName"
                   placeholder="My new Kinesis stream"
                   className="p-2 border rounded-md"
+                  value={integrationName}
+                  onChange={(e) => setIntegrationName(e.target.value)}
                 />
               </div>
 
@@ -46,6 +63,7 @@ const InputSourceDetails = ({
                   name="username"
                   placeholder="Select your IAM access key"
                   className="p-2 border rounded-md"
+                  onChange={(e) => setAccessKey(e.target.value)}
                 />
               </div>
 
@@ -63,6 +81,7 @@ const InputSourceDetails = ({
                     name="password"
                     placeholder="Input your IAM secret"
                     className="p-2 border rounded-md w-full"
+                    onChange={(e) => setSecretKey(e.target.value)}
                   />
                   <button className="absolute right-2 top-2">
                     <svg
@@ -103,7 +122,7 @@ const InputSourceDetails = ({
                 Back
               </button>
               <button
-                onClick={() => onClickNext()}
+                type='submit'
                 className="px-4 py-2 bg-indigo-500 text-white rounded-md"
               >
                 Next: Choose Stream
@@ -111,7 +130,7 @@ const InputSourceDetails = ({
             </div>
           </div>
         )}
-      </div>
+      </form>
     </>
   );
 };
