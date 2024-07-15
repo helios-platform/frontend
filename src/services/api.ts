@@ -70,7 +70,17 @@ const createTable = async ({ streamName, tableName, databaseName, schema }: Crea
   }
 }
 
-export default { getDatabases, executeQuery, authenticate, inferSchema, createTable }
+interface SelectQueryBody {
+  query: string;
+}
+
+// /api/select-query
+const selectQuery = async (body: SelectQueryBody) => {
+  const { data } = await axios.post('/api/select-query', body)
+  return {cols: data.metadata.column_names, rows: data.data}
+}
+
+export default { getDatabases, executeQuery, authenticate, inferSchema, createTable, selectQuery }
 
 // HTTPDriver for http://localhost:8123 returned response code 400)
 //  Code: 62. DB::Exception: Syntax error: failed at position 23 ('('): (user_id Nullable(Int64), session_id Nullable(String), 
