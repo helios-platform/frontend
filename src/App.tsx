@@ -1,14 +1,14 @@
 import './App.css'
-import SourcesHomePage from './components/SourcesHomePage';
+import SourcesHomePage from './components/createDataSource/SourcesHomePage';
 import SideNav from './components/SideNav'
 import SQLConsole from './components/SQLConsole'
-import CreateNewSource from './components/CreateNewSource';
+import CreateNewSource from './components/createDataSource/CreateNewSource';
 
 import {
   Switch,
   Route
 } from "react-router-dom";
-import InputSourceDetails from './components/InputSourceDetails';
+import InputSourceDetails from './components/createDataSource/InputSourceDetails';
 
 
 function App() {
