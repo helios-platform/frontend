@@ -18,7 +18,7 @@ const CreateNewSource = () => {
   const [source, setSource] = useState("");
   const [isTwoActive, setIsTwoActive] = useState(false);
   const [isThreeActive, setIsThreeActive] = useState(false);
-  const [isFourActive, setIsFourActive] = useState(true);
+  const [isFourActive, setIsFourActive] = useState(false);
   const [isFiveActive, setIsFiveActive] = useState(false);
   const [streamNames, setStreamNames] = useState<string[]>([])
   const [sampleEvent, setSampleEvent] = useState<SampleEvent>({})
@@ -60,6 +60,7 @@ const CreateNewSource = () => {
       console.log(data)
       if (data) {
         setInferredSchema(data.inferredSchema)
+        console.log(inferredSchema)
         setSampleEvent(data.sampleEvent)
         handleNavigation(setIsThreeActive, setIsFourActive)()
       }
@@ -69,9 +70,9 @@ const CreateNewSource = () => {
     }
   }
 
-  const handleCreateTable = async ({streamName, tableName, databaseName, schema}: CreateTable) => {
+  const handleCreateTable = async ({ streamName, tableName, databaseName, schema }: CreateTable) => {
     try {
-      const data = await APIService.createTable({streamName, tableName, databaseName, schema})
+      const data = await APIService.createTable({ streamName, tableName, databaseName, schema })
       if (data && data.success) {
         handleNavigation(setIsFourActive, setIsFiveActive)()
       }
@@ -82,76 +83,82 @@ const CreateNewSource = () => {
   }
 
   return (
-    <ol className=" overflow-hidden space-y-8">
-      <li className="relative flex-1 after:content-['']  after:w-0.5 after:h-full  after:bg-indigo-600 after:inline-block after:absolute after:-bottom-11 after:left-4 lg:after:left-5">
-        <div className="flex items-start font-medium w-full">
-          <button className="w-8 h-8 aspect-square bg-indigo-600 border-2 border-transparent rounded-full flex justify-center items-center mr-3 text-sm text-white lg:w-10 lg:h-10">
-            1
-          </button>
-          <SelectSourceType
-            isActive={isOneActive}
-            onClickSource={handleClickSource}
-          />
-        </div>
-      </li>
-      <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
-        <div className="flex items-start font-medium w-full">
-          <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-indigo-600 rounded-full flex justify-center items-center mr-3 text-sm text-indigo-600 lg:w-10 lg:h-10">
-            2
-          </button>
-          <IntegrationProvider>
-            <InputSourceDetails
-              isActive={isTwoActive}
-              onClickBack={handleNavigation(setIsTwoActive, setIsOneActive)}
-              onAuthenticate={handleAuthenticate}
-            />
-          </IntegrationProvider>
-        </div>
-      </li>
-      <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
-        <div className="flex items-start font-medium w-full">
-          <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-indigo-600 rounded-full flex justify-center items-center mr-3 text-sm text-indigo-600 lg:w-10 lg:h-10">
-            3
-          </button>
-          <StreamProvider>
-            <ChooseStream
-              isActive={isThreeActive}
-              onClickBack={handleNavigation(setIsThreeActive, setIsTwoActive)}
-              onInferSchema={handleInferSchema}
-              streamNames={streamNames}
-            />
-          </StreamProvider>
+    <FinalizedSchemaProvider inferredSchema={inferredSchema}>
+      <StreamProvider>
+        <IntegrationProvider>
+          <ol className=" overflow-hidden space-y-8">
+            <li className="relative flex-1 after:content-['']  after:w-0.5 after:h-full  after:bg-indigo-600 after:inline-block after:absolute after:-bottom-11 after:left-4 lg:after:left-5">
+              <div className="flex items-start font-medium w-full">
+                <button className="w-8 h-8 aspect-square bg-indigo-600 border-2 border-transparent rounded-full flex justify-center items-center mr-3 text-sm text-white lg:w-10 lg:h-10">
+                  1
+                </button>
+                <SelectSourceType
+                  isActive={isOneActive}
+                  onClickSource={handleClickSource}
+                />
+              </div>
+            </li>
+            <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
+              <div className="flex items-start font-medium w-full">
+                <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-indigo-600 rounded-full flex justify-center items-center mr-3 text-sm text-indigo-600 lg:w-10 lg:h-10">
+                  2
+                </button>
+                {/* <IntegrationProvider> */}
+                <InputSourceDetails
+                  isActive={isTwoActive}
+                  onClickBack={handleNavigation(setIsTwoActive, setIsOneActive)}
+                  onAuthenticate={handleAuthenticate}
+                />
+                {/* </IntegrationProvider> */}
+              </div>
+            </li>
+            <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
+              <div className="flex items-start font-medium w-full">
+                <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-indigo-600 rounded-full flex justify-center items-center mr-3 text-sm text-indigo-600 lg:w-10 lg:h-10">
+                  3
+                </button>
+                {/* <StreamProvider> */}
+                <ChooseStream
+                  isActive={isThreeActive}
+                  onClickBack={handleNavigation(setIsThreeActive, setIsTwoActive)}
+                  onInferSchema={handleInferSchema}
+                  streamNames={streamNames}
+                />
+                {/* </StreamProvider> */}
 
-        </div>
-      </li>
-      <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
-        <div className="flex items-start font-medium w-full">
-          <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-indigo-600 rounded-full flex justify-center items-center mr-3 text-sm text-indigo-600 lg:w-10 lg:h-10">
-            4
-          </button>
-          <FinalizedSchemaProvider inferredSchema={inferredSchema}>
-            <ConfirmSchema
-              isActive={isFourActive}
-              onClickBack={handleNavigation(setIsFourActive, setIsThreeActive)}
-              onCreateTable={handleCreateTable}
-              //sampleEvent={sampleEvent}
-            />
-          </FinalizedSchemaProvider>
+              </div>
+            </li>
+            <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
+              <div className="flex items-start font-medium w-full">
+                <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-indigo-600 rounded-full flex justify-center items-center mr-3 text-sm text-indigo-600 lg:w-10 lg:h-10">
+                  4
+                </button>
 
-        </div>
-      </li>
-      <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
-        <div className="flex items-start font-medium w-full">
-          <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-indigo-600 rounded-full flex justify-center items-center mr-3 text-sm text-indigo-600 lg:w-10 lg:h-10">
-            5
-          </button>
-          <DataSourceConfirmation
-            isActive={isFiveActive}
-            onClick={() => null}
-          />
-        </div>
-      </li>
-    </ol>
+                <ConfirmSchema
+                  isActive={isFourActive}
+                  onClickBack={handleNavigation(setIsFourActive, setIsThreeActive)}
+                  onCreateTable={handleCreateTable}
+                //sampleEvent={sampleEvent}
+                />
+
+
+              </div>
+            </li>
+            <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
+              <div className="flex items-start font-medium w-full">
+                <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-indigo-600 rounded-full flex justify-center items-center mr-3 text-sm text-indigo-600 lg:w-10 lg:h-10">
+                  5
+                </button>
+                <DataSourceConfirmation
+                  isActive={isFiveActive}
+                  onClick={() => null}
+                />
+              </div>
+            </li>
+          </ol>
+        </IntegrationProvider>
+      </StreamProvider>
+    </FinalizedSchemaProvider>
   );
 };
 

@@ -62,6 +62,7 @@ const inferSchema = async ({streamName}: InferSchemaRequest) => {
 // /api/create-table
 const createTable = async ({ streamName, tableName, databaseName, schema }: CreateTableRequest) => {
   try {
+      console.log('in frontend services createTable', { streamName, tableName, databaseName, schema })
       const { data } = await axios.post<CreateTableResponse>(`${API_URL}/create-table`, { streamName, tableName, databaseName, schema })
       return CreateTableResponseSchema.parse(data)
   } catch (error) {
@@ -70,3 +71,9 @@ const createTable = async ({ streamName, tableName, databaseName, schema }: Crea
 }
 
 export default { getDatabases, executeQuery, authenticate, inferSchema, createTable }
+
+// HTTPDriver for http://localhost:8123 returned response code 400)
+//  Code: 62. DB::Exception: Syntax error: failed at position 23 ('('): (user_id Nullable(Int64), session_id Nullable(String), 
+//  event_type Nullable(String), event_timestamp Nullable(Int64), page_url Nullable(String), product_id Nulla. 
+ 
+//  Expected one of: identifier, end of query. (SYNTAX_ERROR) (version 24.5.3.5 (official build))

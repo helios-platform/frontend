@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { FinalizedSchemaContextType, InferredSchema } from "../types";
 
 const FinalizedSchemaContext = createContext<FinalizedSchemaContextType | undefined>(undefined);
@@ -9,7 +9,13 @@ interface FinalizedSchemaProviderProps {
 }
 
 export const FinalizedSchemaProvider: React.FC<FinalizedSchemaProviderProps> = ({ children, inferredSchema }) => {
-  const [finalizedSchema, setFinalizedSchema] = useState<InferredSchema>(inferredSchema);
+  const [finalizedSchema, setFinalizedSchema] = useState<InferredSchema>(() => inferredSchema);
+  console.log('FinalizedSchemaProvider Context', inferredSchema, finalizedSchema)
+
+  useEffect(() => {
+    // will this make it so that our edits dont work??
+    setFinalizedSchema(inferredSchema);
+  }, [inferredSchema]);
 
   return (
     <FinalizedSchemaContext.Provider value={{ finalizedSchema, setFinalizedSchema }}>
