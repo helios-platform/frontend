@@ -43,7 +43,11 @@ const ChooseStream = ({
                   name=""
                   id="kinesisStream"
                   className="flex items-center justify-between py-2 pl-4 border rounded-md"
-                  onChange={(e: ChangeEvent<HTMLSelectElement>) => setStreamName(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                    console.log({onChangeStreamName: e.target.value})
+                    setStreamName(e.target.value)
+                    console.log(streamName)
+                  }}
                 >
                   <option className="text-slate-200" value="">
                     Select a stream
