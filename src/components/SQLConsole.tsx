@@ -74,12 +74,12 @@ const SQLConsole = () => {
     });
   };
 
-  const handleQueryText = async (e: React.SyntheticEvent) => {
+  const handleQueryText = async (e) => {
     setQuery(e.target.value);
   };
 
-  const handleRunQuery = async () => {
-    const { cols, rows } = await queryService.executeQuery(query);
+  const handleSelectQuery = async () => {
+    const { cols, rows } = await queryService.selectQuery({ query });
     setTableInfo((prevState) => {
       return { ...prevState, cols, rows };
     });
@@ -142,7 +142,7 @@ const SQLConsole = () => {
             <div className="col-span-2 flex justify-end items-start">
               <button
                 className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md"
-                onClick={handleRunQuery}
+                onClick={handleSelectQuery}
               >
                 Run
               </button>
