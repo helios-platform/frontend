@@ -80,6 +80,13 @@ const SQLConsole = () => {
     setQuery(e.target.value);
   };
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault(); // Prevent default behavior (new line in textarea)
+      handleSelectQuery();
+    }
+  };
+
   const handleSelectQuery = async () => {
     const { cols, rows, row_count } = await queryService.executeQuery(query);
     setTableInfo((prevState) => {
@@ -165,6 +172,7 @@ const SQLConsole = () => {
                 placeholder="Write query..."
                 value={query}
                 onChange={handleQueryText}
+                onKeyDown={handleKeyDown}
               ></textarea>
             </div>
             <div>
