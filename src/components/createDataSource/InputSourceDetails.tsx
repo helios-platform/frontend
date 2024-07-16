@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntegration } from '../../contexts/IntegrationContext';
+import APIService from '../../services/api'
 
 interface inputSourceDetailsProps {
   isActive: boolean;
@@ -16,6 +17,23 @@ const InputSourceDetails = ({
   const [ accessKey, setAccessKey ] = useState('');
   // TODO: encrypt user secretKey or use AWS secrets manager
   const [ secretKey, setSecretKey ] = useState('');
+  const [ existingTables, setExistingTables ] = useState([]);
+
+  useEffect(() => {
+    const fetchDynamoTables = async () => {
+      const { rows } = await APIService.executeQuery('SHOW TABLES');
+      return setExistingTables(rows);
+    }
+
+    fetchDynamoTables();
+  }, [])
+
+  const handleTableValidation = (e) => {
+    if (existingTables.includes(integrationName)) {
+      setIntegrationName('')
+      throw new Error('Table name already exists in database');
+    }
+  }
 
   return (
     <>
@@ -25,6 +43,7 @@ const InputSourceDetails = ({
         onSubmit={(e) => {
           e.preventDefault()
           onAuthenticate(accessKey, secretKey)
+          handleTableValidation(e)
         }}
       >
         <h4 className="text-base text-left text-indigo-600 mb-2 pt-2">
