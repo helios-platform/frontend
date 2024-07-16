@@ -1,9 +1,12 @@
+import { Link } from "react-router-dom";
+import { useIntegration } from "../../contexts/IntegrationContext";
+
 interface dataSourceConfirmationProps {
   isActive: boolean;
-  onClick: () => void;
 }
 
-const DataSourceConfirmation = ({ isActive, onClick }: dataSourceConfirmationProps) => {
+const DataSourceConfirmation = ({ isActive }: dataSourceConfirmationProps) => {
+  const { integrationName, setIntegrationName } = useIntegration(); 
   return (
     <>
       <div className="block">
@@ -15,9 +18,12 @@ const DataSourceConfirmation = ({ isActive, onClick }: dataSourceConfirmationPro
           <div>
             <div className="mt-6 flex gap-4">
 
-              <button onClick={() => onClick()} className="px-4 py-2 bg-indigo-500 text-white rounded-md">
-                Visit tableName
-              </button>
+              <Link to="/sql-dashboard" state={{ fromLink: true }}className="px-4 py-2 bg-indigo-500 text-white rounded-md" onClick={() => {
+                console.log('Link clicked!')
+                // setSelectedInfo(...)
+              }}>
+                Visit {integrationName}
+              </Link>
             </div>
           </div>
         )}

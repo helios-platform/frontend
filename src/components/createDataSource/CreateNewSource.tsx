@@ -85,7 +85,7 @@ const CreateNewSource = () => {
   return (
     <FinalizedSchemaProvider inferredSchema={inferredSchema}>
       <StreamProvider>
-        <IntegrationProvider>
+        {/* <IntegrationProvider> */}
           <ol className=" overflow-hidden space-y-8">
             <li className="relative flex-1 after:content-['']  after:w-0.5 after:h-full  after:bg-indigo-600 after:inline-block after:absolute after:-bottom-11 after:left-4 lg:after:left-5">
               <div className="flex items-start font-medium w-full">
@@ -156,7 +156,7 @@ const CreateNewSource = () => {
               </div>
             </li>
           </ol>
-        </IntegrationProvider>
+        {/* </IntegrationProvider> */}
       </StreamProvider>
     </FinalizedSchemaProvider>
   );

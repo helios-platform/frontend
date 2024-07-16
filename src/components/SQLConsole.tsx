@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import queryService from "../services/api";
 import { DataTable } from "./dataTable/DataTable";
 import { columns } from "./dataTable/columns"
+import { useIntegration } from "../contexts/IntegrationContext";
+import { useLocation } from "react-router-dom";
 
 const SQLConsole = () => {
+  const location = useLocation()
   const [instanceInfo, setInstanceInfo] = useState({});
   const [selectedInfo, setSelectedInfo] = useState({
     database: "default",
@@ -18,6 +21,9 @@ const SQLConsole = () => {
   });
   const isFetchingRef = useRef(false);
 
+  const { integrationName } = useIntegration();
+  
+
   useEffect(() => {
     console.log('Effect 1')
     const fetchInstanceInfo = async () => {
@@ -25,6 +31,7 @@ const SQLConsole = () => {
       isFetchingRef.current = true;
 
       const data = await queryService.getDatabases();
+      console.log('have access to tablename in sqlconsole first use effect', integrationName)
       setInstanceInfo(data);
       setSelectedInfo(() => {
         const newState = {
@@ -38,6 +45,24 @@ const SQLConsole = () => {
     };
     fetchInstanceInfo();
   }, []);
+
+  useEffect(() => {
+    console.log('Effect: Update selectedInfo based on integrationName and location');
+    
+    if (integrationName) {
+      if (location?.state?.fromLink || selectedInfo.tableOptions.includes(integrationName)) {
+        setSelectedInfo(prevState => ({
+          ...prevState,
+          table: integrationName
+        }));
+        
+        // Clear the location state if it was set
+        if (location?.state?.fromLink) {
+          window.history.replaceState({}, document.title);
+        }
+      }
+    }
+  }, [location, integrationName, selectedInfo.tableOptions]);
 
   useEffect(() => {
     console.log('Effect 2')
