@@ -14,6 +14,7 @@ const SQLConsole = () => {
   const [tableInfo, setTableInfo] = useState({
     cols: [],
     rows: [],
+    row_count: 0,
   });
   const isFetchingRef = useRef(false);
 
@@ -40,12 +41,13 @@ const SQLConsole = () => {
 
   useEffect(() => {
     console.log('Effect 2')
+
     const fetchTableData = async () => {
       if (selectedInfo.database && selectedInfo.table) {
-        const { cols, rows } = await queryService.executeQuery(
+        const { cols, rows, row_count } = await queryService.executeQuery(
           `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table} LIMIT 20`
         );
-        setTableInfo({ cols, rows });
+        setTableInfo({ cols, rows, row_count });
       }
     };
 
@@ -79,11 +81,10 @@ const SQLConsole = () => {
   };
 
   const handleSelectQuery = async () => {
-    const { cols, rows } = await queryService.selectQuery({ query });
+    const { cols, rows, row_count } = await queryService.executeQuery(query);
     setTableInfo((prevState) => {
-      return { ...prevState, cols, rows };
+      return { ...prevState, cols, rows, row_count };
     });
-    setQuery("");
   };
 
   const databaseOptions = Object.keys(instanceInfo).map((database) => (
@@ -171,7 +172,7 @@ const SQLConsole = () => {
                 htmlFor="table-visual"
                 className="mb-3 block text-sm font-medium text-gray-700"
               >
-                Table Visual
+                Table Visual <span className="text-gray-500">- {tableInfo.row_count} rows</span>
               </label>
               <div id="table-visual">
                 {tableInfo.rows.length !== 0 && tableInfo.cols.length !== 0 && <DataTable columns={formattedColumns} data={tableInfo.rows} ></DataTable>}
