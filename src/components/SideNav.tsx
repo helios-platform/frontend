@@ -41,8 +41,8 @@ const SideNav = () => {
           <div className="flex justify-center items-center my-10">
             <img
               alt = "Helios"
-              src="./images/helios-tp2.webp"
-              className="h-36 w-36 object-contain"
+              src="./images/newlogo.png"
+              className="h-45 w-45 object-contain"
             />
           </div>
           <nav className="flex flex-1 flex-col">

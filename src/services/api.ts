@@ -25,18 +25,26 @@ const getDatabases = async () => {
 };
 
 // /api/query
-const executeQuery = async (query: string) => {
+const executeQuery = async (query: string, page: number = 1, pageSize: number = 10) => {
   function extractLimitNumber(query) {
     const match = query.match(/\bLIMIT\s+(\d+)(?!\s*,)/i);
     return match ? parseInt(match[1], 10) : null;
   }
 
   try {
-    const { data }  = await axios.post(`${API_URL}/query`, { query });
+    const { data }  = await axios.post(`${API_URL}/query`, { query, page, pageSize });
 
     const match = extractLimitNumber(query)
     
-    return {cols: data.metadata.column_names, rows: data.data, row_count: match ? Math.min(data.metadata.row_count, match) : data.metadata.row_count}
+    return {
+      cols: data.metadata.column_names, 
+      rows: data.data, 
+      row_count: match ? Math.min(data.metadata.row_count, match) : data.metadata.row_count, 
+      total_count: data.metadata.total_count, 
+      page: data.metadata.page, 
+      page_size: data.metadata.page_size,
+      total_pages: data.metadata.total_pages
+    }
   } catch (error) {
     console.error('Error in executeQuery: ', error)
   }
@@ -78,20 +86,4 @@ const createTable = async ({ streamName, tableName, databaseName, schema }: Crea
   }
 }
 
-interface SelectQueryBody {
-  query: string;
-}
-
-// /api/select-query
-const selectQuery = async (body: SelectQueryBody) => {
-  const { data } = await axios.post('/api/select-query', body)
-  return {cols: data.metadata.column_names, rows: data.data}
-}
-
-export default { getDatabases, executeQuery, authenticate, inferSchema, createTable, selectQuery }
-
-// HTTPDriver for http://localhost:8123 returned response code 400)
-//  Code: 62. DB::Exception: Syntax error: failed at position 23 ('('): (user_id Nullable(Int64), session_id Nullable(String), 
-//  event_type Nullable(String), event_timestamp Nullable(Int64), page_url Nullable(String), product_id Nulla. 
- 
-//  Expected one of: identifier, end of query. (SYNTAX_ERROR) (version 24.5.3.5 (official build))
+export default { getDatabases, executeQuery, authenticate, inferSchema, createTable }
