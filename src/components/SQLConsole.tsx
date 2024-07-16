@@ -70,7 +70,7 @@ const SQLConsole = () => {
     const fetchTableData = async () => {
       if (selectedInfo.database && selectedInfo.table) {
         const { cols, rows, row_count } = await queryService.executeQuery(
-          `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table} LIMIT 20`
+          `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table}`
         );
         setTableInfo({ cols, rows, row_count });
       }
