@@ -4,7 +4,6 @@ import { DataTable } from "./dataTable/DataTable";
 import { columns } from "./dataTable/columns"
 import { useIntegration } from "../contexts/IntegrationContext";
 import { useLocation } from "react-router-dom";
-import { PaginationState } from "@tanstack/react-table";
 
 const SQLConsole = () => {
   const location = useLocation()
@@ -23,13 +22,7 @@ const SQLConsole = () => {
   const isFetchingRef = useRef(false);
 
   const { integrationName } = useIntegration();
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
-    totalCount: 0,
-    pageCount: 0,
-  });
-
+  
 
   useEffect(() => {
     console.log('Effect 1')
@@ -38,6 +31,7 @@ const SQLConsole = () => {
       isFetchingRef.current = true;
 
       const data = await queryService.getDatabases();
+      console.log('have access to tablename in sqlconsole first use effect', integrationName)
       setInstanceInfo(data);
       setSelectedInfo(() => {
         const newState = {
@@ -53,13 +47,16 @@ const SQLConsole = () => {
   }, []);
 
   useEffect(() => {
+    console.log('Effect: Update selectedInfo based on integrationName and location');
+    
     if (integrationName) {
       if (location?.state?.fromLink || selectedInfo.tableOptions.includes(integrationName)) {
         setSelectedInfo(prevState => ({
           ...prevState,
           table: integrationName
         }));
-
+        
+        // Clear the location state if it was set
         if (location?.state?.fromLink) {
           window.history.replaceState({}, document.title);
         }
@@ -68,32 +65,19 @@ const SQLConsole = () => {
   }, [location, integrationName, selectedInfo.tableOptions]);
 
   useEffect(() => {
+    console.log('Effect 2')
+
     const fetchTableData = async () => {
       if (selectedInfo.database && selectedInfo.table) {
-        const result = await queryService.executeQuery(
-          `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table}`,
-          pagination.pageIndex + 1,
-          pagination.pageSize
+        const { cols, rows, row_count } = await queryService.executeQuery(
+          `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table}`
         );
-        setTableInfo({
-          cols: result.cols,
-          rows: result.rows,
-          row_count: result.row_count,
-        });
-        setPagination(prev => ({
-          ...prev,
-          totalCount: result.total_count,
-          pageCount: result.total_pages,
-        }));
+        setTableInfo({ cols, rows, row_count });
       }
     };
 
     fetchTableData();
-  }, [selectedInfo.database, selectedInfo.table, pagination.pageIndex, pagination.pageSize]);
-
-  const handlePaginationChange = (updater: (old: PaginationState) => PaginationState) => {
-    setPagination(updater);
-  };
+  }, [selectedInfo.database, selectedInfo.table]);
 
   const handleDatabaseSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const database = e.target.value
@@ -124,11 +108,11 @@ const SQLConsole = () => {
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       e.preventDefault(); // Prevent default behavior (new line in textarea)
-      handleQuery();
+      handleSelectQuery();
     }
   };
 
-  const handleQuery = async () => {
+  const handleSelectQuery = async () => {
     const { cols, rows, row_count } = await queryService.executeQuery(query);
     setTableInfo((prevState) => {
       return { ...prevState, cols, rows, row_count };
@@ -191,7 +175,7 @@ const SQLConsole = () => {
             <div className="col-span-2 flex justify-end items-start">
               <button
                 className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md"
-                onClick={handleQuery}
+                onClick={handleSelectQuery}
               >
                 Run
               </button>
@@ -224,14 +208,7 @@ const SQLConsole = () => {
                 Table Visual <span className="text-gray-500">- {tableInfo.row_count} rows</span>
               </label>
               <div id="table-visual">
-                {tableInfo.rows.length !== 0 && tableInfo.cols.length !== 0 && (
-                  <DataTable
-                    columns={formattedColumns}
-                    data={tableInfo.rows} 
-                    pageCount={pagination.pageCount}
-                    pagination={pagination}
-                    onPaginationChange={handlePaginationChange}></DataTable>
-                )}
+                {tableInfo.rows.length !== 0 && tableInfo.cols.length !== 0 && <DataTable columns={formattedColumns} data={tableInfo.rows} ></DataTable>}
               </div>
             </div>
           </div>
