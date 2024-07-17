@@ -5,12 +5,12 @@ const sources = [
   {
     name: "Amazon Kinesis",
     platform: "AWS",
-    imageUrl: "/public/images/amazon-kinesis.svg",
+    imageUrl: "./images/amazon-kinesis.svg",
   },
   {
     name: "Amazon S3",
     platform: "AWS",
-    imageUrl: "/public/images/amazon-s3.svg",
+    imageUrl: "./images/amazon-s3.svg",
   },
 ];
 
