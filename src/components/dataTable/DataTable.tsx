@@ -1,11 +1,12 @@
+import {useState} from 'react'
 "use client"
 
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  PaginationState,
   useReactTable,
+  getPaginationRowModel
 } from "@tanstack/react-table"
 
 import {
@@ -16,38 +17,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Button } from "../ui/button"
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  totalCount: number;
-  totalPages: number;
-  pageIndex: number;
-  pageSize: number;
-  pageCount: number;
-  pagination: PaginationState;
-  onPaginationChange: ((pagination: PaginationState) => PaginationState);
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  pageCount,
-  pagination,
-  onPaginationChange,
 }: DataTableProps<TData, TValue>) {
+  const [pagination, setPagination] = useState({
+    pageIndex: 0, //initial page index
+    pageSize: 10, //default page size
+  });
+
+  console.log({ data, columns })
   const table = useReactTable({
     data,
     columns,
-    state: {
-      pagination,
-    },
-    onPaginationChange,
     getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    pageCount: pageCount
+    getPaginationRowModel: getPaginationRowModel()
+    //manualPagination: true, //turn off client-side pagination
   })
-  
+
+  console.log('TABLE', table)
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -94,18 +90,17 @@ export function DataTable<TData, TValue>({
       </Table>
       <div className="flex items-center justify-start space-x-2 py-4">
         <button
-          // onClick={() => table.previousPage()}
-          onClick={() => onPaginationChange(old => ({ ...old, pageIndex: Math.max(0, old.pageIndex - 1) }))}
+          onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
           className="px-2 py-1 border rounded"
         >
           Previous
         </button>
         <span>
-          Page {pagination.pageIndex + 1} of {pageCount}
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
         </span>
         <button
-          onClick={() => onPaginationChange(old => ({ ...old, pageIndex: Math.min(pageCount - 1, old.pageIndex + 1) }))}
+          onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
           className="px-2 py-1 border rounded"
         >

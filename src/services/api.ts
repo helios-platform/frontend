@@ -25,26 +25,18 @@ const getDatabases = async () => {
 };
 
 // /api/query
-const executeQuery = async (query: string, page: number = 1, pageSize: number = 10) => {
+const executeQuery = async (query: string) => {
   function extractLimitNumber(query) {
     const match = query.match(/\bLIMIT\s+(\d+)(?!\s*,)/i);
     return match ? parseInt(match[1], 10) : null;
   }
 
   try {
-    const { data }  = await axios.post(`${API_URL}/query`, { query, page, pageSize });
+    const { data }  = await axios.post(`${API_URL}/query`, { query });
 
     const match = extractLimitNumber(query)
     
-    return {
-      cols: data.metadata.column_names, 
-      rows: data.data, 
-      row_count: match ? Math.min(data.metadata.row_count, match) : data.metadata.row_count, 
-      total_count: data.metadata.total_count, 
-      page: data.metadata.page, 
-      page_size: data.metadata.page_size,
-      total_pages: data.metadata.total_pages
-    }
+    return {cols: data.metadata.column_names, rows: data.data, row_count: match ? Math.min(data.metadata.row_count, match) : data.metadata.row_count}
   } catch (error) {
     console.error('Error in executeQuery: ', error)
   }
