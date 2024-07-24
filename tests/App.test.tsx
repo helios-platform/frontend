@@ -1,11 +1,11 @@
-import { expect, test } from 'vitest'
+import { expect } from 'vitest'
 import { screen, render } from '@testing-library/react';
 import App from '../src/App';
 import React from 'react';
 import {
   BrowserRouter as Router,
 } from "react-router-dom";
-
+import '@testing-library/jest-dom';
 
 describe('App', () => {
   it('renders without crashing', () => {

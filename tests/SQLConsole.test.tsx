@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import SQLConsole from '../src/components/SQLConsole';
 import { IntegrationProvider } from '../src/contexts/IntegrationContext';
 import queryService from '../src/services/api';
+import '@testing-library/jest-dom';
 
 vi.mock('../src/services/api', () => ({
   default: {
