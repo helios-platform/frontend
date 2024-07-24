@@ -1,10 +1,17 @@
-import { describe, it, expect, vi } from 'vitest';
+import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import SQLConsole from '../src/components/SQLConsole';
 import { IntegrationProvider } from '../src/contexts/IntegrationContext';
-import React from 'react';
+import queryService from '../src/services/api';
 
-// Mock the useLocation hook
+vi.mock('../src/services/api', () => ({
+  default: {
+    getDatabases: vi.fn(),
+    executeQuery: vi.fn(),
+  },
+}));
+
 vi.mock('react-router-dom', () => ({
   ...vi.importActual('react-router-dom'),
   useLocation: () => ({
@@ -16,31 +23,44 @@ vi.mock('react-router-dom', () => ({
 }));
 
 describe('SQLConsole', () => {
-  it('renders database and table selects', () => {
-    render(
-      <IntegrationProvider>
-        <SQLConsole />
-      </IntegrationProvider>
-    );
-    expect(screen.getByLabelText('Databases')).toBeInTheDocument();
-    expect(screen.getByLabelText('Tables')).toBeInTheDocument();
+  beforeEach(() => {
+    vi.resetAllMocks();
+    
+    vi.mocked(queryService.getDatabases).mockResolvedValue({
+      default: ['table1', 'table2'],
+    });
+    vi.mocked(queryService.executeQuery).mockResolvedValue({
+      cols: ['col1', 'col2'],
+      rows: [['data1', 'data2']],
+      row_count: 1,
+    });
   });
 
-  it('renders SQL query textarea', () => {
+  it('renders database and table selects', async () => {
     render(
       <IntegrationProvider>
         <SQLConsole />
       </IntegrationProvider>
     );
-    expect(screen.getByLabelText('SQL Queries')).toBeInTheDocument();
+    expect(await screen.findByLabelText('Databases')).toBeInTheDocument();
+    expect(await screen.findByLabelText('Tables')).toBeInTheDocument();
   });
 
-  it('renders Run button', () => {
+  it('renders SQL query textarea', async () => {
     render(
       <IntegrationProvider>
         <SQLConsole />
       </IntegrationProvider>
     );
-    expect(screen.getByText('Run')).toBeInTheDocument();
+    expect(await screen.findByLabelText('SQL Queries')).toBeInTheDocument();
+  });
+
+  it('renders Run button', async () => {
+    render(
+      <IntegrationProvider>
+        <SQLConsole />
+      </IntegrationProvider>
+    );
+    expect(await screen.findByText('Run')).toBeInTheDocument();
   });
 });
