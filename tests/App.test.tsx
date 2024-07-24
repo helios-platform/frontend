@@ -7,12 +7,34 @@ import {
 } from "react-router-dom";
 
 
-test('React router: expect SQL Dashboard to be in document', () => {
-  
-  render(<Router> <App /> </Router>);
-  expect(screen.getByText('SQL Dashboard'))
-})
+describe('App', () => {
+  it('renders without crashing', () => {
+    render(
+      <Router>
+        <App />
+      </Router>
+    );
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
+  });
 
+  it('contains SQL Dashboard link', () => {
+    render(
+      <Router>
+        <App />
+      </Router>
+    );
+    expect(screen.getByText('SQL Dashboard')).toBeInTheDocument();
+  });
+
+  it('contains Add Data Source link', () => {
+    render(
+      <Router>
+        <App />
+      </Router>
+    );
+    expect(screen.getByText('Add Data Source')).toBeInTheDocument();
+  });
+});
 
 
 
