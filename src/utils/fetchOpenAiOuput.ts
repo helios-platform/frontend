@@ -11,7 +11,7 @@ async function fetchOpenAIOutput(prompt: string): Promise<any> {
       {
         role: 'system',
         content:
-          'You are to take in a table of error data for input. Then provide a precise informative summary of the errors',
+          'You are to take in a table of error data for input. Then provide a precise informative summary of the errors. No markdown please.',
       },
       {
         role: 'user',

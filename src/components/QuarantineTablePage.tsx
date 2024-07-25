@@ -1,29 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
-import queryService from "../services/api";
 import { DataTable } from "./dataTable/DataTable";
 import { columns } from "./dataTable/columns"
-import { useIntegration } from "../contexts/IntegrationContext";
-import { useLocation } from "react-router-dom";
-
-import CodeMirror from '@uiw/react-codemirror';
-// import { javascript } from '@codemirror/lang-javascript';
-import { sql } from '@codemirror/lang-sql';
-// import { StreamLanguage } from '@codemirror/language';
-import { createTheme } from '@uiw/codemirror-themes';
-import { tags as t } from '@lezer/highlight';
 import fetchOpenAIOutput from "../utils/fetchOpenAiOuput";
-
-
+import QuarantineTableForm from "./QuarantineTableForm";
+import { useEffect, useRef, useState } from "react";
+import queryService from '../services/api'
 
 const QuarantineTablePage = () => {
-  const location = useLocation()
-  const [instanceInfo, setInstanceInfo] = useState({});
   const [selectedInfo, setSelectedInfo] = useState({
-    database: "quarantine",
+    // Change this to "quarantine" once we can test with quarantine data
+    database: "default",
     tableOptions: [],
     table: null,
   });
-  const [query, setQuery] = useState("");
   const [tableInfo, setTableInfo] = useState({
     cols: [],
     rows: [],
@@ -31,19 +19,16 @@ const QuarantineTablePage = () => {
   });
   const isFetchingRef = useRef(false);
 
-  const { integrationName } = useIntegration();
-
-
   useEffect(() => {
-    const fetchInstanceInfo = async () => {
+    const fetchQuarantineTables = async () => {
       if (isFetchingRef.current) return; // Prevent duplicate requests
       isFetchingRef.current = true;
 
-      const data = await queryService.getDatabases();
-      setInstanceInfo(data);
-      setSelectedInfo(() => {
+      const data = await queryService.listDatabases();
+      // Make sure to use data["quarantine"] to fetch quarantine tables. Using "default" for testing purposes
+      setSelectedInfo((prevState) => {
         const newState = {
-          database: "default",
+          ...prevState,
           tableOptions: data ? data["default"] || [] : [],
           table: data ? (data["default"] ? data["default"][0] : null) : null,
         };
@@ -51,28 +36,18 @@ const QuarantineTablePage = () => {
       });
       isFetchingRef.current = false
     };
-    fetchInstanceInfo();
+    try {
+      fetchQuarantineTables();
+    } catch(error) {
+      console.log(error)
+    }
+
   }, []);
 
-  useEffect(() => {
-    if (integrationName) {
-      if (location?.state?.fromLink || selectedInfo.tableOptions.includes(integrationName)) {
-        setSelectedInfo(prevState => ({
-          ...prevState,
-          table: integrationName
-        }));
-
-        // Clear the location state if it was set
-        if (location?.state?.fromLink) {
-          window.history.replaceState({}, document.title);
-        }
-      }
-    }
-  }, [location, integrationName, selectedInfo.tableOptions]);
-
+  // TODO: Make sure we really need another useEffect here
   useEffect(() => {
     const fetchTableData = async () => {
-      if (selectedInfo.database && selectedInfo.table) {
+      if (selectedInfo.table) {
         const { cols, rows, row_count } = await queryService.executeQuery(
           `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table}`
         );
@@ -80,19 +55,14 @@ const QuarantineTablePage = () => {
       }
     };
 
-    fetchTableData();
-  }, [selectedInfo.database, selectedInfo.table]);
-
-  // const handleDatabaseSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   const database = e.target.value
-  //   const newSelectedInfo = {
-  //     database,
-  //     tableOptions: instanceInfo[database] || [],
-  //     table: instanceInfo[database] ? instanceInfo[database][0] : null
-  //   }
-  //   setSelectedInfo(newSelectedInfo)
-  // }
-
+    try {
+      fetchTableData();
+    } catch (error) {
+      console.log(error)
+    } finally {
+      alert('You have no quarantine tables')
+    }
+  }, [selectedInfo.table]);
 
   const handleTableSelect = async (e: React.SyntheticEvent) => {
     const table = e.target.value;
@@ -105,160 +75,106 @@ const QuarantineTablePage = () => {
     });
   };
 
-  const handleQueryText = async (queryValue) => {
-    setQuery(queryValue);
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault(); // Prevent default behavior (new line in textarea)
-      handleSelectQuery();
-    }
-  };
-
-  const handleSelectQuery = async () => {
-    const modifiedQuery = query ? query : `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table}`
-    setQuery(modifiedQuery)
-
-    const { cols, rows, row_count } = await queryService.executeQuery(modifiedQuery);
-    setTableInfo((prevState) => {
-      return { ...prevState, cols, rows, row_count };
-    });
-  };
-
-  const handleAIAnalysis = async () => {
-    const modifiedQuery = query ? query : `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table}`
-    setQuery(modifiedQuery)
-
-    const { cols, rows, row_count } = await queryService.executeQuery(modifiedQuery);
-    setTableInfo((prevState) => {
-      return { ...prevState, cols, rows, row_count };
-    });
-  };
-
-
   const tableOptions = selectedInfo.tableOptions.map((table) => (
     <option key={table} value={table}>
       {table}
     </option>
   ));
 
+  const quarantineTableSelector = (
+    <>
+      <label
+        htmlFor="tables"
+        className="block text-sm font-medium text-gray-700"
+      >
+        Quarantine Tables
+      </label>
+      <select
+        id="tables"
+        name="tables"
+        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+        onChange={handleTableSelect}
+        value={selectedInfo.table || ""}
+      >
+        {tableOptions}
+      </select>
+    </>
+  )
+
   const formattedColumns = columns(tableInfo.cols)
 
-  // const myDarkTheme = createTheme({
-  //   theme: 'dark',
-  //   settings: {
-  //     background: '#2d2e42',
-  //     foreground: '#f0f0f0',
-  //     caret: '#ff9800',
-  //     selection: '#ff980033',
-  //     selectionMatch: '#ff980033',
-  //     lineHighlight: '#464766',
-  //     gutterBackground: '#2d2e42',
-  //     gutterForeground: '#8b8b8b',
-  //   },
-  //   styles: [
-  //     { tag: t.keyword, color: '#ff9800', fontWeight: 'bold' },
-  //     { tag: [t.name, t.deleted, t.character, t.macroName], color: '#40c4ff' },
-  //     { tag: [t.function(t.variableName), t.labelName], color: '#ff6e40', fontStyle: 'italic' },
-  //     { tag: [t.color, t.constant(t.name), t.standard(t.name)], color: '#ffab40' },
-  //     { tag: [t.definition(t.name), t.separator], color: '#f0f0f0' },
-  //     { tag: [t.typeName, t.className, t.number, t.changed, t.annotation, t.modifier, t.self, t.namespace], color: '#64ffda' },
-  //     { tag: [t.operator, t.operatorKeyword], color: '#ff5252', fontWeight: 'bold' },
-  //     { tag: [t.url, t.escape, t.regexp, t.link], color: '#e9c46a' },
-  //     { tag: [t.meta, t.comment], color: '#78909c', fontStyle: 'italic' },
-  //     { tag: t.strong, fontWeight: 'bold', color: '#ff9800' },
-  //     { tag: t.emphasis, fontStyle: 'italic', color: '#40c4ff' },
-  //     { tag: t.strikethrough, textDecoration: 'line-through' },
-  //     { tag: t.link, color: '#e9c46a', textDecoration: 'underline' },
-  //     { tag: t.heading, fontWeight: 'bold', color: '#ff9800' },
-  //     { tag: [t.atom, t.bool, t.special(t.variableName)], color: '#ffab40' },
-  //     { tag: [t.processingInstruction, t.string, t.inserted], color: '#9ccc65' },
-  //     { tag: t.invalid, color: '#ffffff', backgroundColor: '#ff5252' },
-  //   ],
-  // });
-
-  const handleAIButton = async () => {
+  const handleAIButton = async (e) => {
+    e.preventDefault()
     const text = await fetchOpenAIOutput(JSON.stringify([
       {
-        id: 1,
-        timestamp: new Date('2024-07-25T08:30:00'),
-        errorType: 'Syntax Error',
-        severity: 'Low',
-        message: 'Unexpected token',
-        rawError: 'SyntaxError: Unexpected token ) in JSON at position 52'
+        error_type: "datetime_parse_error",
+        error_message: "Cannot parse '2023-13-32' as DateTime: syntax error",
+        raw_data: JSON.stringify({ timestamp: "2023-13-32", user_id: 12345, action: "login" }),
+        original_table: "user_actions",
+        insertion_timestamp: "2024-07-25 10:15:30"
       },
       {
-        id: 2,
-        timestamp: new Date('2024-07-25T09:15:00'),
-        errorType: 'Runtime Error',
-        severity: 'High',
-        message: 'Cannot read property of undefined',
-        rawError: 'TypeError: Cannot read property \'name\' of undefined'
+        error_type: "uuid_error",
+        error_message: "Cannot parse uuid 'not-a-valid-uuid': Cannot parse UUID from String",
+        raw_data: JSON.stringify({ id: "not-a-valid-uuid", product_name: "Widget", quantity: 5 }),
+        original_table: "inventory",
+        insertion_timestamp: "2024-07-25 11:22:45"
       },
       {
-        id: 3,
-        timestamp: new Date('2024-07-25T10:00:00'),
-        errorType: 'Logical Error',
-        severity: 'Medium',
-        message: 'Incorrect calculation result',
-        rawError: 'Error: Expected sum to be 15, but got 14'
+        error_type: "int_parse_error",
+        error_message: "Cannot parse string 'one hundred' as Int32: syntax error",
+        raw_data: JSON.stringify({ order_id: 789, item_count: "one hundred" }),
+        original_table: "orders",
+        insertion_timestamp: "2024-07-25 12:30:15"
       },
       {
-        id: 4,
-        timestamp: new Date('2024-07-25T10:45:00'),
-        errorType: 'Network Error',
-        severity: 'High',
-        message: 'Failed to fetch',
-        rawError: 'NetworkError: Failed to fetch https://api.example.com/data'
+        error_type: "extra_column_error",
+        error_message: "Unrecognized column 'middle_name' in table",
+        raw_data: JSON.stringify({ first_name: "John", middle_name: "Doe", last_name: "Smith" }),
+        original_table: "customers",
+        insertion_timestamp: "2024-07-25 13:45:00"
       },
       {
-        id: 5,
-        timestamp: new Date('2024-07-25T11:30:00'),
-        errorType: 'Database Error',
-        severity: 'Critical',
-        message: 'Connection timeout',
-        rawError: 'DatabaseError: Connection to database timed out after 30 seconds'
+        error_type: "missing_column_error",
+        error_message: "No such column 'email' in table",
+        raw_data: JSON.stringify({ username: "jsmith", password: "hashedpassword" }),
+        original_table: "users",
+        insertion_timestamp: "2024-07-25 14:10:20"
       },
       {
-        id: 6,
-        timestamp: new Date('2024-07-25T12:15:00'),
-        errorType: 'Syntax Error',
-        severity: 'Low',
-        message: 'Missing semicolon',
-        rawError: 'SyntaxError: Missing semicolon at line 42'
+        error_type: "unknown",
+        error_message: "Unexpected error occurred during data insertion",
+        raw_data: JSON.stringify({ transaction_id: "TX123456", amount: 99.99, currency: "USD" }),
+        original_table: "transactions",
+        insertion_timestamp: "2024-07-25 15:05:55"
       },
       {
-        id: 7,
-        timestamp: new Date('2024-07-25T13:00:00'),
-        errorType: 'Runtime Error',
-        severity: 'Medium',
-        message: 'Stack overflow',
-        rawError: 'RangeError: Maximum call stack size exceeded'
+        error_type: "syntax_error",
+        error_message: "Cannot parse expression of type 'String' here: expected 'Boolean'",
+        raw_data: JSON.stringify({ is_active: "yes", account_id: 98765 }),
+        original_table: "accounts",
+        insertion_timestamp: "2024-07-25 16:20:10"
       },
       {
-        id: 8,
-        timestamp: new Date('2024-07-25T13:45:00'),
-        errorType: 'Logical Error',
-        severity: 'High',
-        message: 'Infinite loop detected',
-        rawError: 'Error: Infinite loop detected in function processData()'
+        error_type: "type_mismatch",
+        error_message: "Type mismatch in ORDER BY: expected UInt32, got String",
+        raw_data: JSON.stringify({ product_id: "ABC123", category: "electronics", price: 299.99 }),
+        original_table: "products",
+        insertion_timestamp: "2024-07-25 17:30:40"
       },
       {
-        id: 9,
-        timestamp: new Date('2024-07-25T14:30:00'),
-        errorType: 'Network Error',
-        severity: 'Medium',
-        message: 'CORS policy violation',
-        rawError: 'AccessError: Cross-origin request blocked: CORS policy violation'
+        error_type: "unknown",
+        error_message: "Internal server error occurred during query execution",
+        raw_data: JSON.stringify({ log_id: 56789, severity: "high", message: "API timeout" }),
+        original_table: "system_logs",
+        insertion_timestamp: "2024-07-25 18:45:25"
       },
       {
-        id: 10,
-        timestamp: new Date('2024-07-25T15:15:00'),
-        errorType: 'Database Error',
-        severity: 'Critical',
-        message: 'Duplicate key violation',
-        rawError: 'IntegrityError: Duplicate entry \'user@example.com\' for key \'users.email\''
+        error_type: "unknown",
+        error_message: "Unexpected EOF while parsing JSON input",
+        raw_data: "{\"incomplete_json\": \"This JSON string is not properly closed",
+        original_table: "raw_data",
+        insertion_timestamp: "2024-07-25 19:55:50"
       }
     ]))
     console.log(text)
@@ -268,66 +184,8 @@ const QuarantineTablePage = () => {
     <>
       <div className="p-8 w-full">
         <div className="max-w-screen mx-auto bg-white shadow-lg rounded-lg p-6 border border-gray-200">
-          <div className="grid grid-cols-4 gap-4 mb-6">
-            <div>
-              <label
-                  htmlFor="tables"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Quarantine Tables
-                </label>
-                <select
-                  id="tables"
-                  name="tables"
-                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                  onChange={handleTableSelect}
-                  value={selectedInfo.table || ""}
-                >
-                  {tableOptions}
-                </select>
-            </div>
-            <div>
-              
-            </div>
-            <div className="col-span-2 flex justify-end items-start">
-              <button
-                className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md"
-                onClick={handleSelectQuery}
-              >
-                Run
-              </button>
-              <button
-                className="ml-3 bg-yellow-400 text-black hover:bg-yellow-600 text-white py-2 px-4 rounded-md"
-                onClick={handleAIButton}
-              >
-                AI Error Analysis
-              </button>
-            </div>
-          </div>
+          <QuarantineTableForm handleAIButton={handleAIButton} quarantineTableSelector={quarantineTableSelector} />
           <div className="grid grid-cols-1 gap-4">
-            <div>
-              <form>
-                <input type="checkbox"></input>
-                <label>Show Unique Errors</label>
-              </form>
-
-              {/* <label
-                htmlFor="sql-queries"
-                className="mb-3 block text-sm font-medium text-gray-700"
-              >
-                SQL Queries
-              </label> */}
-              {/* <CodeMirror
-                id="sql-queries"
-                placeholder="Write query..."
-                value={query}
-                height="300px"
-                extensions={[sql()]}
-                onChange={handleQueryText}
-                onKeyDown={handleKeyDown}
-                theme={myDarkTheme}
-              /> */}
-            </div>
             <div>
               <label
                 htmlFor="table-visual"

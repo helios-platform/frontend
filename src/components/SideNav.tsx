@@ -15,9 +15,9 @@ function classNames(...classes) {
 }
 
 const navigation = [
-  { name: 'SQL Dashboard', to: '/sql-dashboard', icon: HomeIcon, current: false },
-  { name: 'Add Data Source', to: '/datasource-dashboard', icon: UsersIcon, current: false },
-  { name: 'View Data Sources', to: '/datasource-view', icon: UsersIcon, current: false }
+  { name: 'SQL Dashboard', to: '/sql-dashboard', icon: HomeIcon, current: true },
+  { name: 'Add Data Source', to: '/datasource-create', icon: UsersIcon, current: false },
+  { name: 'View Data Sources', to: '/datasource-view', icon: UsersIcon, current: false },
   { name: 'Quarantine Table', to: '/quarantine-table', icon: BeakerIcon, current: false },
 ]
 

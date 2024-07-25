@@ -1,5 +1,4 @@
 export function columns(cols) {
-  console.log("test", {cols})
   return cols.map(column => {
     return {
       accessorKey: column,
