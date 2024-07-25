@@ -1,11 +1,8 @@
-// import dotenv from 'dotenv';
-// dotenv.config();
-
 async function fetchOpenAIOutput(prompt: string): Promise<any> {
   const endpoint = 'https://api.openai.com/v1/chat/completions';
   const method = 'POST';
   const headers = {
-    Authorization: `Bearer`,
+    Authorization: `Bearer ${import.meta.env.VITE_OPEN_AI_KEY}`,
     'Content-Type': 'application/json',
   };
 
