@@ -1,4 +1,5 @@
 import {
+  BeakerIcon,
   Cog6ToothIcon,
   HomeIcon,
   UsersIcon,
@@ -14,9 +15,9 @@ function classNames(...classes) {
 }
 
 const navigation = [
-  { name: 'SQL Dashboard', to: '/sql-dashboard', icon: HomeIcon, current: true },
+  { name: 'SQL Dashboard', to: '/sql-dashboard', icon: HomeIcon, current: false },
   { name: 'Add Data Source', to: '/datasource-dashboard', icon: UsersIcon, current: false },
-  // { name: 'Projects', href: '#', icon: FolderIcon, current: false },
+  { name: 'Quarantine Table', to: '/quarantine-table', icon: BeakerIcon, current: false },
   // { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
   // { name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false },
   // { name: 'Reports', href: '#', icon: ChartPieIcon, current: false },

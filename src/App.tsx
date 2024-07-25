@@ -3,12 +3,12 @@ import SourcesHomePage from './components/createDataSource/SourcesHomePage';
 import SideNav from './components/SideNav'
 import SQLConsole from './components/SQLConsole'
 import CreateNewSource from './components/createDataSource/CreateNewSource';
+import QuarantineTablePage from './components/QuarantineTablePage';
 
 import {
   Switch,
   Route
 } from "react-router-dom";
-import InputSourceDetails from './components/createDataSource/InputSourceDetails';
 import { IntegrationProvider } from './contexts/IntegrationContext';
 
 
@@ -32,6 +32,9 @@ function App() {
                   </Route>
                   <Route path="/create-source">
                     <CreateNewSource />
+                  </Route>
+                  <Route path="/quarantine-table">
+                    <QuarantineTablePage />
                   </Route>
                   {/* <Route path="/input-source-details">
                     <InputSourceDetails />

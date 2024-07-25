@@ -40,7 +40,8 @@ const SQLConsole = () => {
       isFetchingRef.current = true;
 
       const data = await queryService.getDatabases();
-      console.log('have access to tablename in sqlconsole first use effect', integrationName)
+      delete data.quarantine
+
       setInstanceInfo(data);
       setSelectedInfo(() => {
         const newState = {
