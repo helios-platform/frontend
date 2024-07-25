@@ -32,9 +32,7 @@ const SQLConsole = () => {
 
   const { integrationName } = useIntegration();
 
-
   useEffect(() => {
-    console.log('Effect 1')
     const fetchInstanceInfo = async () => {
       if (isFetchingRef.current) return; // Prevent duplicate requests
       isFetchingRef.current = true;
@@ -57,8 +55,6 @@ const SQLConsole = () => {
   }, []);
 
   useEffect(() => {
-    console.log('Effect: Update selectedInfo based on integrationName and location');
-
     if (integrationName) {
       if (location?.state?.fromLink || selectedInfo.tableOptions.includes(integrationName)) {
         setSelectedInfo(prevState => ({
@@ -75,8 +71,6 @@ const SQLConsole = () => {
   }, [location, integrationName, selectedInfo.tableOptions]);
 
   useEffect(() => {
-    console.log('Effect 2')
-
     const fetchTableData = async () => {
       if (selectedInfo.database && selectedInfo.table) {
         const { cols, rows, row_count } = await queryService.executeQuery(
@@ -154,9 +148,10 @@ const SQLConsole = () => {
       caret: '#ff9800',
       selection: '#ff980033',
       selectionMatch: '#ff980033',
-      lineHighlight: '#464766',
       gutterBackground: '#2d2e42',
       gutterForeground: '#8b8b8b',
+      fontSize: '16px',
+      lineHighlight: '#464766',
     },
     styles: [
       { tag: t.keyword, color: '#ff9800', fontWeight: 'bold' },
@@ -251,7 +246,7 @@ const SQLConsole = () => {
                 id="sql-queries"
                 placeholder="Write query..."
                 value={query}
-                height="300px"
+                height="350px"
                 extensions={[sql()]}
                 onChange={handleQueryText}
                 onKeyDown={handleKeyDown}
