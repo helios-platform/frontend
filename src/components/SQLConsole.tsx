@@ -5,6 +5,15 @@ import { columns } from "./dataTable/columns"
 import { useIntegration } from "../contexts/IntegrationContext";
 import { useLocation } from "react-router-dom";
 
+import CodeMirror from '@uiw/react-codemirror';
+// import { javascript } from '@codemirror/lang-javascript';
+import { sql } from '@codemirror/lang-sql';
+// import { StreamLanguage } from '@codemirror/language';
+import { createTheme } from '@uiw/codemirror-themes';
+import { tags as t } from '@lezer/highlight';
+
+
+
 const SQLConsole = () => {
   const location = useLocation()
   const [instanceInfo, setInstanceInfo] = useState({});
@@ -22,7 +31,7 @@ const SQLConsole = () => {
   const isFetchingRef = useRef(false);
 
   const { integrationName } = useIntegration();
-  
+
 
   useEffect(() => {
     console.log('Effect 1')
@@ -48,14 +57,14 @@ const SQLConsole = () => {
 
   useEffect(() => {
     console.log('Effect: Update selectedInfo based on integrationName and location');
-    
+
     if (integrationName) {
       if (location?.state?.fromLink || selectedInfo.tableOptions.includes(integrationName)) {
         setSelectedInfo(prevState => ({
           ...prevState,
           table: integrationName
         }));
-        
+
         // Clear the location state if it was set
         if (location?.state?.fromLink) {
           window.history.replaceState({}, document.title);
@@ -101,8 +110,8 @@ const SQLConsole = () => {
     });
   };
 
-  const handleQueryText = async (e) => {
-    setQuery(e.target.value);
+  const handleQueryText = async (queryValue) => {
+    setQuery(queryValue);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -113,7 +122,10 @@ const SQLConsole = () => {
   };
 
   const handleSelectQuery = async () => {
-    const { cols, rows, row_count } = await queryService.executeQuery(query);
+    const modifiedQuery = query ? query : `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table}`
+    setQuery(modifiedQuery)
+
+    const { cols, rows, row_count } = await queryService.executeQuery(modifiedQuery);
     setTableInfo((prevState) => {
       return { ...prevState, cols, rows, row_count };
     });
@@ -133,8 +145,43 @@ const SQLConsole = () => {
 
   const formattedColumns = columns(tableInfo.cols)
 
+  const myDarkTheme = createTheme({
+    theme: 'dark',
+    settings: {
+      background: '#2d2e42',
+      foreground: '#f0f0f0',
+      caret: '#ff9800',
+      selection: '#ff980033',
+      selectionMatch: '#ff980033',
+      lineHighlight: '#464766',
+      gutterBackground: '#2d2e42',
+      gutterForeground: '#8b8b8b',
+    },
+    styles: [
+      { tag: t.keyword, color: '#ff9800', fontWeight: 'bold' },
+      { tag: [t.name, t.deleted, t.character, t.macroName], color: '#40c4ff' },
+      { tag: [t.function(t.variableName), t.labelName], color: '#ff6e40', fontStyle: 'italic' },
+      { tag: [t.color, t.constant(t.name), t.standard(t.name)], color: '#ffab40' },
+      { tag: [t.definition(t.name), t.separator], color: '#f0f0f0' },
+      { tag: [t.typeName, t.className, t.number, t.changed, t.annotation, t.modifier, t.self, t.namespace], color: '#64ffda' },
+      { tag: [t.operator, t.operatorKeyword], color: '#ff5252', fontWeight: 'bold' },
+      { tag: [t.url, t.escape, t.regexp, t.link], color: '#e9c46a' },
+      { tag: [t.meta, t.comment], color: '#78909c', fontStyle: 'italic' },
+      { tag: t.strong, fontWeight: 'bold', color: '#ff9800' },
+      { tag: t.emphasis, fontStyle: 'italic', color: '#40c4ff' },
+      { tag: t.strikethrough, textDecoration: 'line-through' },
+      { tag: t.link, color: '#e9c46a', textDecoration: 'underline' },
+      { tag: t.heading, fontWeight: 'bold', color: '#ff9800' },
+      { tag: [t.atom, t.bool, t.special(t.variableName)], color: '#ffab40' },
+      { tag: [t.processingInstruction, t.string, t.inserted], color: '#9ccc65' },
+      { tag: t.invalid, color: '#ffffff', backgroundColor: '#ff5252' },
+    ],
+  });
+
   return (
     <>
+      {/* <CodeMirror value={'javascript'} height="200px" extensions={[sql({ sql: true })]} /> */}
+
       <div className="p-8 w-full">
         <div className="max-w-screen mx-auto bg-white shadow-lg rounded-lg p-6 border border-gray-200">
           <div className="grid grid-cols-4 gap-4 mb-6">
@@ -189,7 +236,7 @@ const SQLConsole = () => {
               >
                 SQL Queries
               </label>
-              <textarea
+              {/* <textarea
                 id="sql-queries"
                 name="sql-queries"
                 rows="4"
@@ -198,7 +245,17 @@ const SQLConsole = () => {
                 value={query}
                 onChange={handleQueryText}
                 onKeyDown={handleKeyDown}
-              ></textarea>
+              ></textarea> */}
+              <CodeMirror
+                id="sql-queries"
+                placeholder="Write query..."
+                value={query}
+                height="300px"
+                extensions={[sql()]}
+                onChange={handleQueryText}
+                onKeyDown={handleKeyDown}
+                theme={myDarkTheme}
+              />
             </div>
             <div>
               <label
