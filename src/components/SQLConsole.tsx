@@ -39,7 +39,7 @@ const SQLConsole = () => {
       if (isFetchingRef.current) return; // Prevent duplicate requests
       isFetchingRef.current = true;
 
-      const data = await queryService.getDatabases();
+      const data = await queryService.listDatabases();
       delete data.quarantine
 
       setInstanceInfo(data);

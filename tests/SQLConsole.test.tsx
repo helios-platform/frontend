@@ -8,7 +8,7 @@ import '@testing-library/jest-dom';
 
 vi.mock('../src/services/api', () => ({
   default: {
-    getDatabases: vi.fn(),
+    listDatabases: vi.fn(),
     executeQuery: vi.fn(),
   },
 }));
@@ -27,7 +27,7 @@ describe('SQLConsole', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     
-    vi.mocked(queryService.getDatabases).mockResolvedValue({
+    vi.mocked(queryService.listDatabases).mockResolvedValue({
       default: ['table1', 'table2'],
     });
     vi.mocked(queryService.executeQuery).mockResolvedValue({

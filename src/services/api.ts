@@ -8,25 +8,34 @@ import {
   InferSchemaResponseSchema,
   CreateTableRequest,
   CreateTableResponseSchema,
-  CreateTableResponse
+  CreateTableResponse,
+  DatabasesResponse,
+  DatabasesResponseSchema,
+  QueryResponse,
+  QueryResponseSchema,
+  SourcesResponse,
+  SourcesResponseSchema,
+  RawSourceDataSchema,
+  TransformedSourceDataSchema,
 } from '../types';
 
 const API_URL = '/api';
 
 // /api/databases
-const getDatabases = async () => {
+
+const listDatabases = async (): Promise<DatabasesResponse> => {
   try {
-    const response = await axios.get(`${API_URL}/databases`);
-    return response.data;
+    const { data } = await axios.get<DatabasesResponse>(`${API_URL}/databases`);
+    return DatabasesResponseSchema.parse(data);
   } catch (error) {
-    console.error('Error in getDatabases: ', error)
+    console.error('Error in listDatabases: ', error)
     return {}
   }
 };
 
 // /api/query
-const executeQuery = async (query: string) => {
-  function extractLimitNumber(query) {
+const executeQuery = async (query: string): Promise<QueryResponse | undefined> => {
+  function extractLimitNumber(query: string): number | null {
     const match = query.match(/\bLIMIT\s+(\d+)(?!\s*,)/i);
     return match ? parseInt(match[1], 10) : null;
   }
@@ -36,7 +45,12 @@ const executeQuery = async (query: string) => {
 
     const match = extractLimitNumber(query)
     
-    return {cols: data.metadata.column_names, rows: data.data, row_count: match ? Math.min(data.metadata.row_count, match) : data.metadata.row_count}
+    const response: QueryResponse = {
+      cols: data.metadata.column_names,
+      rows: data.data,
+      row_count: match ? Math.min(data.metadata.row_count, match) : data.metadata.row_count,
+    };
+    return QueryResponseSchema.parse(response);
   } catch (error) {
     console.error('Error in executeQuery: ', error)
   }
@@ -78,4 +92,37 @@ const createTable = async ({ streamName, tableName, databaseName, schema }: Crea
   }
 }
 
-export default { getDatabases, executeQuery, authenticate, inferSchema, createTable }
+const streamTypeMap = {
+  'kinesis': {
+    streamType: "Amazon Kinesis",
+    imageUrl: "./images/amazon-kinesis.svg",
+  },
+  's3': {
+    streamType: "Amazon S3",
+    imageUrl: "./images/amazon-s3.svg",
+  },
+};
+
+// /api/sources
+const listSources = async (): Promise<SourcesResponse | undefined> => {
+  try {
+    const response = await axios.get(`${API_URL}/sources`);
+    const rawData = RawSourceDataSchema.array().parse(response.data);
+    
+    const transformedData = rawData.map(source => {
+      const mappedData = streamTypeMap[source.streamType as keyof typeof streamTypeMap];
+      return TransformedSourceDataSchema.parse({
+        ...source,
+        streamType: mappedData ? mappedData.streamType : source.streamType,
+        imageUrl: mappedData ? mappedData.imageUrl : null
+      });
+    });
+
+    return SourcesResponseSchema.parse(transformedData);
+  } catch (error) {
+    console.error('Error in listSources: ', error);
+    return undefined;
+  }
+};
+
+export default { listDatabases, executeQuery, authenticate, inferSchema, createTable, listSources }
