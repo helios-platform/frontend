@@ -9,7 +9,8 @@ import CodeMirror from '@uiw/react-codemirror';
 // import { javascript } from '@codemirror/lang-javascript';
 import { sql } from '@codemirror/lang-sql';
 // import { StreamLanguage } from '@codemirror/language';
-
+import { createTheme } from '@uiw/codemirror-themes';
+import { tags as t } from '@lezer/highlight';
 
 
 
@@ -109,8 +110,8 @@ const SQLConsole = () => {
     });
   };
 
-  const handleQueryText = async (e) => {
-    setQuery(e.target.value);
+  const handleQueryText = async (queryValue) => {
+    setQuery(queryValue);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -121,7 +122,10 @@ const SQLConsole = () => {
   };
 
   const handleSelectQuery = async () => {
-    const { cols, rows, row_count } = await queryService.executeQuery(query);
+    const modifiedQuery = query ? query : `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table}`
+    setQuery(modifiedQuery)
+
+    const { cols, rows, row_count } = await queryService.executeQuery(modifiedQuery);
     setTableInfo((prevState) => {
       return { ...prevState, cols, rows, row_count };
     });
@@ -141,9 +145,38 @@ const SQLConsole = () => {
 
   const formattedColumns = columns(tableInfo.cols)
 
-
-  // for CodeMirror
-  const [content, setContent] = useState('query');
+  const myDarkTheme = createTheme({
+    theme: 'dark',
+    settings: {
+      background: '#2d2e42',
+      foreground: '#f0f0f0',
+      caret: '#ff9800',
+      selection: '#ff980033',
+      selectionMatch: '#ff980033',
+      lineHighlight: '#464766',
+      gutterBackground: '#2d2e42',
+      gutterForeground: '#8b8b8b',
+    },
+    styles: [
+      { tag: t.keyword, color: '#ff9800', fontWeight: 'bold' },
+      { tag: [t.name, t.deleted, t.character, t.macroName], color: '#40c4ff' },
+      { tag: [t.function(t.variableName), t.labelName], color: '#ff6e40', fontStyle: 'italic' },
+      { tag: [t.color, t.constant(t.name), t.standard(t.name)], color: '#ffab40' },
+      { tag: [t.definition(t.name), t.separator], color: '#f0f0f0' },
+      { tag: [t.typeName, t.className, t.number, t.changed, t.annotation, t.modifier, t.self, t.namespace], color: '#64ffda' },
+      { tag: [t.operator, t.operatorKeyword], color: '#ff5252', fontWeight: 'bold' },
+      { tag: [t.url, t.escape, t.regexp, t.link], color: '#e9c46a' },
+      { tag: [t.meta, t.comment], color: '#78909c', fontStyle: 'italic' },
+      { tag: t.strong, fontWeight: 'bold', color: '#ff9800' },
+      { tag: t.emphasis, fontStyle: 'italic', color: '#40c4ff' },
+      { tag: t.strikethrough, textDecoration: 'line-through' },
+      { tag: t.link, color: '#e9c46a', textDecoration: 'underline' },
+      { tag: t.heading, fontWeight: 'bold', color: '#ff9800' },
+      { tag: [t.atom, t.bool, t.special(t.variableName)], color: '#ffab40' },
+      { tag: [t.processingInstruction, t.string, t.inserted], color: '#9ccc65' },
+      { tag: t.invalid, color: '#ffffff', backgroundColor: '#ff5252' },
+    ],
+  });
 
   return (
     <>
@@ -214,11 +247,14 @@ const SQLConsole = () => {
                 onKeyDown={handleKeyDown}
               ></textarea> */}
               <CodeMirror
-                value={content}
+                id="sql-queries"
+                placeholder="Write query..."
+                value={query}
+                height="300px"
                 extensions={[sql()]}
-                onChange={(value) => {
-                  setContent(value);
-                }}
+                onChange={handleQueryText}
+                onKeyDown={handleKeyDown}
+                theme={myDarkTheme}
               />
             </div>
             <div>
