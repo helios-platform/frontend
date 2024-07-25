@@ -30,7 +30,7 @@ const SQLConsole = () => {
       if (isFetchingRef.current) return; // Prevent duplicate requests
       isFetchingRef.current = true;
 
-      const data = await queryService.getDatabases();
+      const data = await queryService.listDatabases();
       console.log('have access to tablename in sqlconsole first use effect', integrationName)
       setInstanceInfo(data);
       setSelectedInfo(() => {

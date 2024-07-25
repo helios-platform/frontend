@@ -1,5 +1,4 @@
 import {useState} from 'react'
-"use client"
 
 import {
   ColumnDef,
@@ -16,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "../ui/table"
 import { Button } from "../ui/button"
 
 interface DataTableProps<TData, TValue> {
