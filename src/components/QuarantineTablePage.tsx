@@ -60,7 +60,7 @@ const QuarantineTablePage = () => {
     } catch (error) {
       console.log(error)
     } finally {
-      alert('You have no quarantine tables')
+      // alert('You have no quarantine tables')
     }
   }, [selectedInfo.table]);
 

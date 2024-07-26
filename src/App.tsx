@@ -3,7 +3,6 @@ import './App.css'
 import SideNav from './components/SideNav'
 import SQLConsole from './components/SQLConsole'
 import CreateNewSource from './components/createDataSource/CreateNewSource';
-import QuarantineTablePage from './components/QuarantineTablePage';
 import ViewSources from './components/createDataSource/ViewSources';
 import QuarantineTablePage from './components/QuarantineTablePage';
 
@@ -13,10 +12,7 @@ import {
 } from "react-router-dom";
 import { IntegrationProvider } from './contexts/IntegrationContext';
 
-
-
 function App() {
-
   return (
     <>
       <IntegrationProvider>
