@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import queryService from '../services/api'
 
-const QuarantineTableFormTableForm = ({handleAIButton, quarantineTableSelector}) => {
+const QuarantineTableFormTableForm = ({handleAIButton, quarantineTableSelector, tableName, handleFilter}) => {
   const [showUniqueErrors, setShowUniqueErrors] = useState(false);
   const [timeRange, setTimeRange] = useState('1h');
   //const [startDate, setStartDate] = useState('');
@@ -12,7 +13,7 @@ const QuarantineTableFormTableForm = ({handleAIButton, quarantineTableSelector})
     let query = 'SELECT ';
     query += formData.showUniqueErrors ? 'DISTINCT ' : '';
     query += 'error_type, error_message, raw_data, original_table, insertion_timestamp ';
-    query += 'FROM error_table ';
+    query += `FROM quarantine.${tableName} `;
     
     let whereConditions = [];
 
@@ -38,7 +39,7 @@ const QuarantineTableFormTableForm = ({handleAIButton, quarantineTableSelector})
 
     // Search condition
     if (formData.search) {
-      whereConditions.push(`(error_message ILIKE '%${formData.search}%' OR error_type ILIKE '%${formData.search}%')`);
+      whereConditions.push(`(error_message ILIKE '%${formData.search}%' OR error_type ILIKE '%${formData.search}%' OR raw_data ILIKE '%${formData.search}%')`);
     }
 
     if (whereConditions.length > 0) {
@@ -54,7 +55,7 @@ const QuarantineTableFormTableForm = ({handleAIButton, quarantineTableSelector})
     return query;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
       showUniqueErrors,
@@ -63,9 +64,14 @@ const QuarantineTableFormTableForm = ({handleAIButton, quarantineTableSelector})
       limit
     };
     console.log('Form submitted', formData);
-    
-    const sqlQuery = generateSQLQuery(formData);
-    console.log('Generated SQL Query:', sqlQuery);
+    try {
+      const sqlQuery = generateSQLQuery(formData);
+      console.log('Generated SQL Query:', sqlQuery);
+      handleFilter(sqlQuery)
+      
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
@@ -140,8 +146,9 @@ const QuarantineTableFormTableForm = ({handleAIButton, quarantineTableSelector})
               Apply Filters
             </button>
             <button
+              type="button"
               className="ml-3 bg-yellow-400 text-black hover:bg-yellow-600 text-white py-2 px-4 rounded-md"
-              //onClick={handleAIButton}
+              onClick={handleAIButton}
             >
               AI Error Analysis
             </button>
