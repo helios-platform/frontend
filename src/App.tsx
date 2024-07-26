@@ -6,11 +6,14 @@ import CreateNewSource from './components/createDataSource/CreateNewSource';
 import ViewSources from './components/createDataSource/ViewSources';
 import QuarantineTablePage from './components/QuarantineTablePage';
 
+
 import {
   Switch,
   Route
 } from "react-router-dom";
+
 import { IntegrationProvider } from './contexts/IntegrationContext';
+
 
 function App() {
   return (

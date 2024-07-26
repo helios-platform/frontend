@@ -39,7 +39,6 @@ const SQLConsole = () => {
 
       const data = await queryService.listDatabases();
       delete data.quarantine
-
       setInstanceInfo(data);
       setSelectedInfo(() => {
         const newState = {
