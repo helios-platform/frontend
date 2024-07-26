@@ -4,6 +4,8 @@ import SideNav from './components/SideNav'
 import SQLConsole from './components/SQLConsole'
 import CreateNewSource from './components/createDataSource/CreateNewSource';
 import ViewSources from './components/createDataSource/ViewSources';
+import QuarantineTablePage from './components/QuarantineTablePage';
+
 
 import {
   Switch,
@@ -13,9 +15,7 @@ import {
 import { IntegrationProvider } from './contexts/IntegrationContext';
 
 
-
 function App() {
-
   return (
     <>
       <IntegrationProvider>
@@ -32,6 +32,9 @@ function App() {
                   </Route>
                   <Route path="/datasource-view">
                     <ViewSources />
+                  </Route>
+                  <Route path="/quarantine-table">
+                    <QuarantineTablePage />
                   </Route>
                 </Switch>
               </div>
