@@ -150,7 +150,7 @@ const SQLConsole = () => {
       gutterBackground: '#2d2e42',
       gutterForeground: '#8b8b8b',
       fontSize: '16px',
-      lineHighlight: '#464766',
+      lineHighlight: 'rgba(70,71,102,0.5)',
     },
     styles: [
       { tag: t.keyword, color: '#ff9800', fontWeight: 'bold' },
