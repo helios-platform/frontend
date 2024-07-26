@@ -27,8 +27,8 @@ const SideNav = () => {
 
   return ( 
     <>
-      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-indigo-600 px-6 pb-4">
+      <div className="lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-sky-400 px-6 pb-4">
           <div className="flex justify-center items-center my-10">
             <img
               alt = "Helios"
@@ -45,15 +45,15 @@ const SideNav = () => {
                       <Link to={item.to} onClick={()=>setSelectedPage(item.to)}
                         className={classNames(
                           item.to === selectedPage
-                            ? 'bg-indigo-700 text-white'
-                            : 'text-indigo-200 hover:bg-indigo-700 hover:text-white',
+                            ? 'bg-indigo-600 text-white'
+                            : 'text-white hover:bg-sky-500 hover:text-white',
                           'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
                         )}
                       >
                         <item.icon
                           aria-hidden="true"
                           className={classNames(
-                            item.current ? 'text-white' : 'text-indigo-200 group-hover:text-white',
+                            item.current ? 'text-white' : 'text-white group-hover:text-white',
                             'h-6 w-6 shrink-0',
                           )}
                         />
