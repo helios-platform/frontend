@@ -89,7 +89,7 @@ const ViewSources: React.FC = () => {
   })
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 bg-white shadow-lg rounded-lg">
       <h1 className="text-2xl font-bold mb-4">Connections</h1>
       <div className="rounded-md border">
         <Table>
