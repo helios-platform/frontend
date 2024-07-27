@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import queryService from '../services/api'
+import Modal from './Modal';
 
-const QuarantineTableFormTableForm = ({handleAIButton, quarantineTableSelector, tableName, handleFilter}) => {
+const QuarantineTableFormTableForm = ({handleAIButton, quarantineTableSelector, tableName, handleFilter, aiResponse, handleCloseModal, isModalOpen}) => {
   const [showUniqueErrors, setShowUniqueErrors] = useState(false);
-  const [timeRange, setTimeRange] = useState('1h');
+  const [timeRange, setTimeRange] = useState('all');
   //const [startDate, setStartDate] = useState('');
   //const [endDate, setEndDate] = useState('');
   const [search, setSearch] = useState('');
@@ -152,6 +153,8 @@ const QuarantineTableFormTableForm = ({handleAIButton, quarantineTableSelector, 
             >
               AI Error Analysis
             </button>
+            {aiResponse && isModalOpen && <Modal text={aiResponse} isOpen={isModalOpen} onClose={handleCloseModal}></Modal>}
+            
           </div>
         </div>
       </form>

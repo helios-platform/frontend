@@ -17,6 +17,8 @@ const QuarantineTablePage = () => {
     rows: [],
     row_count: 0,
   });
+  const [aiResponseText, setAiResponseText] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const isFetchingRef = useRef(false);
 
   useEffect(() => {
@@ -106,16 +108,22 @@ const QuarantineTablePage = () => {
   const formattedColumns = columns(tableInfo.cols)
 
   const handleAIButton = async (e) => {
-    console.log('Generating...')
+    setIsModalOpen(true)
+    setAiResponseText('Generating error analysis...')
     const text = await fetchOpenAIOutput(JSON.stringify({cols: tableInfo.cols, rows: tableInfo.rows}).slice(0, 1000));
-    alert(text)
+    setAiResponseText(text)
+    
   }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <>
       <div className="p-8 w-full">
         <div className="max-w-screen mx-auto bg-white shadow-lg rounded-lg p-6 border border-gray-200">
-          <QuarantineTableForm handleFilter={fetchTableData} handleAIButton={handleAIButton} quarantineTableSelector={quarantineTableSelector} tableName={selectedInfo.table} />
+          <QuarantineTableForm handleFilter={fetchTableData} handleCloseModal={handleCloseModal} handleAIButton={handleAIButton} quarantineTableSelector={quarantineTableSelector} tableName={selectedInfo.table} aiResponse={aiResponseText} isModalOpen={isModalOpen} />
           <div className="grid grid-cols-1 gap-4">
             <div>
               <label
