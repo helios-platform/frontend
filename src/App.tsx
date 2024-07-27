@@ -5,21 +5,50 @@ import SQLConsole from './components/SQLConsole'
 import CreateNewSource from './components/createDataSource/CreateNewSource';
 import ViewSources from './components/createDataSource/ViewSources';
 import QuarantineTablePage from './components/QuarantineTablePage';
-
+import { IntegrationProvider } from './contexts/IntegrationContext';
+import HomePage from './components/HomePage';
 
 import {
   Switch,
   Route
 } from "react-router-dom";
 
-import { IntegrationProvider } from './contexts/IntegrationContext';
+
 
 
 function App() {
   return (
     <>
       <IntegrationProvider>
-        <div className="w-screen"> 
+        <Switch>
+            <Route exact path="/">
+              <HomePage />
+            </Route>
+            <Route>
+              <div className="w-screen h-screen bg-amber-50">
+                <SideNav />
+                <div className="lg:pl-72 py-10">
+                  <div className="px-4 sm:px-6 lg:px-8">
+                    <Switch>
+                      <Route path="/sql-dashboard">
+                        <SQLConsole />
+                      </Route>
+                      <Route path="/datasource-create">
+                        <CreateNewSource />
+                      </Route>
+                      <Route path="/datasource-view">
+                        <ViewSources />
+                      </Route>
+                      <Route path="/quarantine-table">
+                        <QuarantineTablePage />
+                      </Route>
+                    </Switch>
+                  </div>
+                </div>
+              </div>
+            </Route>
+          </Switch>
+        {/* <div className="w-screen"> 
           <SideNav />
           <div className="lg:pl-72 py-10" >
               <div className="px-4 sm:px-6 lg:px-8">
@@ -39,7 +68,7 @@ function App() {
                 </Switch>
               </div>
           </div>
-        </div>
+        </div> */}
       </IntegrationProvider>
     </>
   )

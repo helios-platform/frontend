@@ -32,6 +32,7 @@
     "react-dom": "^18.3.1",
     "react-resizable-panels": "^2.0.20",
     "react-router-dom": "^5.2.0",
+    "sass": "^1.77.8",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
