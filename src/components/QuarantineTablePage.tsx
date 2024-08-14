@@ -3,7 +3,8 @@ import { columns } from "./dataTable/columns"
 import fetchOpenAIOutput from "../utils/fetchOpenAiOuput";
 import QuarantineTableForm from "./QuarantineTableForm";
 import { useEffect, useRef, useState } from "react";
-import queryService from '../services/api'
+import queryService from '../services/api';
+import { mkConfig, generateCsv, download } from 'export-to-csv';
 
 const QuarantineTablePage = () => {
   const [selectedInfo, setSelectedInfo] = useState({
@@ -68,6 +69,18 @@ const QuarantineTablePage = () => {
     }
   };
 
+  const csvConfig = mkConfig({
+    fieldSeparator: ',',
+    filename: 'sql_export',
+    decimalSeparator: '.',
+    useKeysAsHeaders: true,
+  });
+
+  const exportToCSV = () => {
+    const csv = generateCsv(csvConfig)(tableInfo.rows);
+    download(csvConfig)(csv);
+  };
+
   const handleTableSelect = async (e: React.SyntheticEvent) => {
     const table = e.target.value;
     setSelectedInfo((prevState) => {
@@ -123,7 +136,7 @@ const QuarantineTablePage = () => {
     <>
       <div className="p-8 w-full">
         <div className="max-w-screen mx-auto bg-white shadow-lg rounded-lg p-6 border border-gray-200">
-          <QuarantineTableForm handleFilter={fetchTableData} handleCloseModal={handleCloseModal} handleAIButton={handleAIButton} quarantineTableSelector={quarantineTableSelector} tableName={selectedInfo.table} aiResponse={aiResponseText} isModalOpen={isModalOpen} />
+          <QuarantineTableForm handleFilter={fetchTableData} handleCloseModal={handleCloseModal} handleAIButton={handleAIButton} quarantineTableSelector={quarantineTableSelector} tableName={selectedInfo.table} aiResponse={aiResponseText} isModalOpen={isModalOpen} exportToCSV={exportToCSV} />
           <div className="grid grid-cols-1 gap-4">
             <div>
               <label
