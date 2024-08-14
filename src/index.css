@@ -2,7 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CSS reset below */
+:root {
+  background-color: bg-amber-300;
+}
+
+/* CSS reset below, attribution joshcomeau.com */
 /*
   1. Use a more-intuitive box-sizing model.
 */

@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
-import queryService from '../../api';
-import { useIntegration } from '../../contexts/IntegrationContext';
-import { useLocation } from 'react-router-dom';
+import { useState, useEffect, useCallback } from "react";
+import queryService from "../../api";
+import { useIntegration } from "../../contexts/IntegrationContext";
+import { useLocation } from "react-router-dom";
+import { mkConfig, generateCsv, download } from "export-to-csv";
 
 export const useSQLConsole = () => {
   const [instanceInfo, setInstanceInfo] = useState({});
@@ -24,7 +25,7 @@ export const useSQLConsole = () => {
     const fetchInstanceInfo = async () => {
       const data = await queryService.listDatabases();
       setInstanceInfo(data);
-      setSelectedInfo(prevState => ({
+      setSelectedInfo((prevState) => ({
         ...prevState,
         tableOptions: data?.default || [],
         table: data?.default?.[0] || null,
@@ -34,10 +35,14 @@ export const useSQLConsole = () => {
   }, []);
 
   useEffect(() => {
-    if (integrationName && (location?.state?.fromLink || selectedInfo.tableOptions.includes(integrationName))) {
-      setSelectedInfo(prevState => ({
+    if (
+      integrationName &&
+      (location?.state?.fromLink ||
+        selectedInfo.tableOptions.includes(integrationName))
+    ) {
+      setSelectedInfo((prevState) => ({
         ...prevState,
-        table: integrationName
+        table: integrationName,
       }));
       if (location?.state?.fromLink) {
         window.history.replaceState({}, document.title);
@@ -49,7 +54,7 @@ export const useSQLConsole = () => {
     const fetchTableData = async () => {
       if (selectedInfo.database && selectedInfo.table) {
         const result = await queryService.executeQuery(
-          `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table}`
+          `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table}`,
         );
         if (result) {
           setTableInfo(result);
@@ -59,24 +64,48 @@ export const useSQLConsole = () => {
     fetchTableData();
   }, [selectedInfo.database, selectedInfo.table]);
 
-  const handleDatabaseSelect = useCallback((database: string) => {
-    setSelectedInfo(prevState => ({
-      database,
-      tableOptions: instanceInfo[database] || [],
-      table: instanceInfo[database]?.[0] || null
-    }));
-  }, [instanceInfo]);
+  const csvConfig = mkConfig({
+    fieldSeparator: ",",
+    filename: "sql_export",
+    decimalSeparator: ".",
+    useKeysAsHeaders: true,
+  });
+
+  const exportToCSV = () => {
+    const csv = generateCsv(csvConfig)(tableInfo.rows);
+    download(csvConfig)(csv);
+  };
+
+  const handleDatabaseSelect = useCallback(
+    (database: string) => {
+      setSelectedInfo((prevState) => ({
+        database,
+        tableOptions: instanceInfo[database] || [],
+        table: instanceInfo[database]?.[0] || null,
+      }));
+    },
+    [instanceInfo],
+  );
 
   const handleTableSelect = useCallback((table: string) => {
-    setSelectedInfo(prevState => ({ ...prevState, table }));
+    setSelectedInfo((prevState) => ({ ...prevState, table }));
   }, []);
 
   const handleQueryChange = useCallback((newQuery: string) => {
     setQuery(newQuery);
   }, []);
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault(); // Prevent new line in textarea
+      handleRunQuery();
+    }
+  };
+
   const handleRunQuery = useCallback(async () => {
-    const result = await queryService.executeQuery(query || `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table}`);
+    const result = await queryService.executeQuery(
+      query || `SELECT * FROM ${selectedInfo.database}.${selectedInfo.table}`,
+    );
     if (result) {
       setTableInfo(result);
     }
@@ -91,5 +120,7 @@ export const useSQLConsole = () => {
     handleTableSelect,
     handleQueryChange,
     handleRunQuery,
+    handleKeyDown,
+    exportToCSV,
   };
 };
