@@ -4,15 +4,11 @@ import { DataTable } from "./dataTable/DataTable";
 import { columns } from "./dataTable/columns"
 import { useIntegration } from "../contexts/IntegrationContext";
 import { useLocation } from "react-router-dom";
-
 import CodeMirror from '@uiw/react-codemirror';
-// import { javascript } from '@codemirror/lang-javascript';
 import { sql } from '@codemirror/lang-sql';
-// import { StreamLanguage } from '@codemirror/language';
 import { createTheme } from '@uiw/codemirror-themes';
 import { tags as t } from '@lezer/highlight';
-
-
+import { mkConfig, generateCsv, download } from 'export-to-csv';
 
 const SQLConsole = () => {
   const location = useLocation()
@@ -81,6 +77,18 @@ const SQLConsole = () => {
 
     fetchTableData();
   }, [selectedInfo.database, selectedInfo.table]);
+
+  const csvConfig = mkConfig({
+    fieldSeparator: ',',
+    filename: 'sql_export',
+    decimalSeparator: '.',
+    useKeysAsHeaders: true,
+  });
+
+  const exportToCSV = () => {
+    const csv = generateCsv(csvConfig)(tableInfo.rows);
+    download(csvConfig)(csv);
+  };
 
   const handleDatabaseSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const database = e.target.value
@@ -175,8 +183,6 @@ const SQLConsole = () => {
 
   return (
     <>
-      {/* <CodeMirror value={'javascript'} height="200px" extensions={[sql({ sql: true })]} /> */}
-
       <div className="p-8 w-full">
         <div className="max-w-screen mx-auto bg-white shadow-lg rounded-lg p-6 border border-gray-200">
           <div className="grid grid-cols-4 gap-4 mb-6">
@@ -214,12 +220,19 @@ const SQLConsole = () => {
                 {tableOptions}
               </select>
             </div>
-            <div className="col-span-2 flex justify-end items-start">
+            <div className="col-span-2 flex justify-end items-start space-x-2">
               <button
                 className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md"
                 onClick={handleSelectQuery}
               >
                 Run
+              </button>
+              <button
+                className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md"
+                onClick={exportToCSV}
+                disabled={tableInfo.rows.length === 0}
+              >
+                Export CSV
               </button>
             </div>
           </div>
@@ -231,16 +244,6 @@ const SQLConsole = () => {
               >
                 SQL Queries
               </label>
-              {/* <textarea
-                id="sql-queries"
-                name="sql-queries"
-                rows="4"
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                placeholder="Write query..."
-                value={query}
-                onChange={handleQueryText}
-                onKeyDown={handleKeyDown}
-              ></textarea> */}
               <CodeMirror
                 id="sql-queries"
                 placeholder="Write query..."
@@ -260,7 +263,9 @@ const SQLConsole = () => {
                 Table Visual <span className="text-gray-500">- {tableInfo.row_count} rows</span>
               </label>
               <div id="table-visual">
-                {tableInfo.rows.length !== 0 && tableInfo.cols.length !== 0 && <DataTable columns={formattedColumns} data={tableInfo.rows} ></DataTable>}
+                {tableInfo.rows.length !== 0 && tableInfo.cols.length !== 0 && (
+                  <DataTable columns={formattedColumns} data={tableInfo.rows} />
+                )}
               </div>
             </div>
           </div>
