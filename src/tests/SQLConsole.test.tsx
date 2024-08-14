@@ -1,9 +1,9 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import SQLConsole from '../src/components/SQLConsole';
-import { IntegrationProvider } from '../src/contexts/IntegrationContext';
-import queryService from '../src/services/api';
+import SQLConsole from '../components/SQLConsole';
+import { IntegrationProvider } from '../contexts/IntegrationContext';
+import queryService from '../api';
 import '@testing-library/jest-dom';
 
 vi.mock('../src/services/api', () => ({

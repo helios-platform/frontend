@@ -1,9 +1,9 @@
 import { DataTable } from "./dataTable/DataTable";
 import { columns } from "./dataTable/columns"
-import fetchOpenAIOutput from "../utils/fetchOpenAiOuput";
+import fetchOpenAIOutput from "../lib/fetchOpenAiOuput";
 import QuarantineTableForm from "./QuarantineTableForm";
 import { useEffect, useRef, useState } from "react";
-import queryService from '../services/api'
+import queryService from '../api'
 
 const QuarantineTablePage = () => {
   const [selectedInfo, setSelectedInfo] = useState({

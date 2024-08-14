@@ -1,5 +1,3 @@
-import './App.css'
-
 import SideNav from './components/SideNav'
 import SQLConsole from './components/SQLConsole'
 import CreateNewSource from './components/createDataSource/CreateNewSource';

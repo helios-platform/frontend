@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useIntegration } from '../../contexts/IntegrationContext';
-import APIService from '../../services/api'
+import APIService from '../../api'
 
 interface inputSourceDetailsProps {
   isActive: boolean;

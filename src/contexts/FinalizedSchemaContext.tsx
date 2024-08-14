@@ -13,7 +13,6 @@ export const FinalizedSchemaProvider: React.FC<FinalizedSchemaProviderProps> = (
   console.log('FinalizedSchemaProvider Context', inferredSchema, finalizedSchema)
 
   useEffect(() => {
-    // will this make it so that our edits dont work??
     setFinalizedSchema(inferredSchema);
   }, [inferredSchema]);
 

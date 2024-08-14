@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import queryService from "../services/api";
+import queryService from "../api";
 import { DataTable } from "./dataTable/DataTable";
 import { columns } from "./dataTable/columns"
 import { useIntegration } from "../contexts/IntegrationContext";
@@ -11,8 +11,6 @@ import { sql } from '@codemirror/lang-sql';
 // import { StreamLanguage } from '@codemirror/language';
 import { createTheme } from '@uiw/codemirror-themes';
 import { tags as t } from '@lezer/highlight';
-
-
 
 const SQLConsole = () => {
   const location = useLocation()

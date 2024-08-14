@@ -1,6 +1,6 @@
 import { expect } from 'vitest'
 import { screen, render } from '@testing-library/react';
-import App from '../src/App';
+import App from '../App';
 import React from 'react';
 import {
   BrowserRouter as Router,

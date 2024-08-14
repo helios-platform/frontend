@@ -4,7 +4,7 @@ import InputSourceDetails from "./InputSourceDetails";
 import ChooseStream from "./ChooseStream";
 import ConfirmSchema from "./ConfirmSchema";
 import DataSourceConfirmation from "./DataSourceConfirmation";
-import APIService from '../../services/api'
+import APIService from '../../api'
 import { CreateTable, InferredSchema, SampleEvent } from "../../types";
 import { StreamProvider } from "../../contexts/StreamContext";
 import { IntegrationProvider } from "../../contexts/IntegrationContext";
