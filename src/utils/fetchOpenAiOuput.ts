@@ -10,8 +10,8 @@ async function fetchOpenAIOutput(prompt: string): Promise<any> {
     messages: [
       {
         role: 'system',
-        content:
-          'You are to take in a table of error data for input. Then provide a precise informative summary of the errors. No markdown please.',
+        content:`
+          'You are to take in a table of error data for input. Then provide a precise informative summary of the errors. Please be insightful. No markdown please. No symbols like *, #, etc for formatting.' Prefer to keep it short and simple.`,
       },
       {
         role: 'user',
