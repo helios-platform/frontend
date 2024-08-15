@@ -16,7 +16,7 @@ import {
   TableRow,
 } from "../ui/table"
 
-import api from '../../services/api'
+import api from '../../api'
 import { SourcesResponse } from "../../types";
 import { useIntegration } from "../../contexts/IntegrationContext";
 import StreamTypeDisplay from "./StreamTypeDisplay";

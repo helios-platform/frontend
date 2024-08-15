@@ -1,7 +1,5 @@
-import './App.css'
-
 import SideNav from './components/SideNav'
-import SQLConsole from './components/SQLConsole'
+import SQLConsole from './components/SQLConsole/SQLConsole'
 import CreateNewSource from './components/createDataSource/CreateNewSource';
 import ViewSources from './components/createDataSource/ViewSources';
 import QuarantineTablePage from './components/QuarantineTablePage';
