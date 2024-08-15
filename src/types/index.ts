@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-export const DatabasesResponseSchema = z.record(z.string(), z.array(z.string()));
+export const DatabasesResponseSchema = z.record(
+  z.string(),
+  z.array(z.string()),
+);
 export type DatabasesResponse = z.infer<typeof DatabasesResponseSchema>;
 
 export const QueryResponseSchema = z.object({
@@ -11,10 +14,9 @@ export const QueryResponseSchema = z.object({
 
 export type QueryResponse = z.infer<typeof QueryResponseSchema>;
 
-
 export const AuthenticateResponseSchema = z.object({
   authenticated: z.boolean(),
-  streamNames: z.array(z.string())
+  streamNames: z.array(z.string()),
 });
 
 export type AuthenticateResponse = z.infer<typeof AuthenticateResponseSchema>;
@@ -23,20 +25,20 @@ export type AuthenticateRequest = z.infer<typeof AuthenticateRequestSchema>;
 
 const ColumnSchema = z.object({
   name: z.string(),
-  type: z.string()
+  type: z.string(),
 });
 
 const SampleEventSchema = z.record(z.string(), z.any());
 
-export type SampleEvent = z.infer<typeof SampleEventSchema>
+export type SampleEvent = z.infer<typeof SampleEventSchema>;
 
-const InferredSchemaSchema = z.array(ColumnSchema)
+const InferredSchemaSchema = z.array(ColumnSchema);
 
-export type InferredSchema = z.infer<typeof InferredSchemaSchema>
+export type InferredSchema = z.infer<typeof InferredSchemaSchema>;
 
 export const InferSchemaResponseSchema = z.object({
   inferredSchema: InferredSchemaSchema,
-  sampleEvent: SampleEventSchema
+  sampleEvent: SampleEventSchema,
 });
 
 export type InferSchemaResponse = z.infer<typeof InferSchemaResponseSchema>;
@@ -47,7 +49,7 @@ const AuthenticateRequestSchema = z.object({
 });
 
 const InferSchemaRequestSchema = z.object({
-  streamName: z.string()
+  streamName: z.string(),
 });
 
 export type InferSchemaRequest = z.infer<typeof InferSchemaRequestSchema>;
@@ -56,37 +58,37 @@ const CreateTableRequestSchema = z.object({
   streamName: z.string(),
   tableName: z.string(),
   schema: z.array(ColumnSchema),
-  databaseName: z.string()
+  databaseName: z.string(),
 });
 
 export const CreateTableResponseSchema = z.object({
-  create_table_query: z.string(),
+  createTableQuery: z.string(),
   message: z.string(),
   streamARN: z.string(),
   success: z.boolean(),
-  tableUUID: z.string()
+  tableUUID: z.string(),
 });
 
 export type CreateTableResponse = z.infer<typeof CreateTableResponseSchema>;
 export type CreateTableRequest = z.infer<typeof CreateTableRequestSchema>;
-export type CreateTable = z.infer<typeof CreateTableSchema>
+export type CreateTable = z.infer<typeof CreateTableSchema>;
 
 const CreateTableSchema = z.object({
   streamName: z.string(),
-  tableName: z.string(), 
-  databaseName: z.string(), 
-  schema: InferredSchemaSchema
+  tableName: z.string(),
+  databaseName: z.string(),
+  schema: InferredSchemaSchema,
 });
 
 export const RawSourceDataSchema = z.object({
   streamName: z.string(),
   streamType: z.string(),
   tableName: z.string(),
-  createdOn: z.string()
+  createdOn: z.string(),
 });
 
 export const TransformedSourceDataSchema = RawSourceDataSchema.extend({
-  imageUrl: z.string().nullable()
+  imageUrl: z.string().nullable(),
 });
 
 export const SourcesResponseSchema = z.array(TransformedSourceDataSchema);
@@ -96,37 +98,38 @@ export type TransformedSourceData = z.infer<typeof TransformedSourceDataSchema>;
 export type SourcesResponse = z.infer<typeof SourcesResponseSchema>;
 
 export const streamTypeMap = {
-  'kinesis': {
+  kinesis: {
     streamType: "Amazon Kinesis",
     imageUrl: "./images/amazon-kinesis.svg",
   },
-  's3': {
+  s3: {
     streamType: "Amazon S3",
     imageUrl: "./images/amazon-s3.svg",
   },
 } as const;
 
-
 const StreamContextTypeSchema = z.object({
   streamName: z.string(),
-  setStreamName: z.function().args(z.string()).returns(z.void())
-})
+  setStreamName: z.function().args(z.string()).returns(z.void()),
+});
 
-export type StreamContextType = z.infer<typeof StreamContextTypeSchema>
+export type StreamContextType = z.infer<typeof StreamContextTypeSchema>;
 
 const IntegrationContextTypeSchema = z.object({
   integrationName: z.string(),
-  setIntegrationName: z.function().args(z.string()).returns(z.void())
-})
+  setIntegrationName: z.function().args(z.string()).returns(z.void()),
+});
 
-export type IntegrationContextType = z.infer<typeof IntegrationContextTypeSchema>
+export type IntegrationContextType = z.infer<
+  typeof IntegrationContextTypeSchema
+>;
 
 const FinalizedSchemaContextTypeSchema = z.object({
   finalizedSchema: InferredSchemaSchema,
-  setFinalizedSchema: z.function(
-    z.tuple([InferredSchemaSchema]),
-    z.void()
-  )
-})
+  setFinalizedSchema: z.function(z.tuple([InferredSchemaSchema]), z.void()),
+});
 
-export type FinalizedSchemaContextType = z.infer<typeof FinalizedSchemaContextTypeSchema>
+export type FinalizedSchemaContextType = z.infer<
+  typeof FinalizedSchemaContextTypeSchema
+>;
+
