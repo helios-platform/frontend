@@ -1,6 +1,6 @@
-import React from 'react';
-import { DataTable } from '../dataTable/DataTable';
-import { columns } from '../dataTable/columns';
+import React from "react";
+import { DataTable } from "../dataTable/DataTable";
+import { columns } from "../dataTable/columns";
 
 interface ResultsTableProps {
   data: {
@@ -11,11 +11,22 @@ interface ResultsTableProps {
 }
 
 const ResultsTable: React.FC<ResultsTableProps> = ({ data }) => (
-  <div>
-    <label htmlFor="table-visual" className="mb-3 block text-sm font-medium text-gray-700">
-      Table Visual <span className="text-gray-500">- {data.row_count} rows</span>
-    </label>
-    <div id="table-visual">
+  <div className="mt-6">
+    <div className="flex gap-4 items-center mb-3">
+      <label
+        htmlFor="table-visual"
+        className="block text-lg font-medium text-custom-light-gray"
+      >
+        Results
+      </label>
+      <span className="text-lg text-custom-light-blue">
+        {data.row_count} rows
+      </span>
+    </div>
+    <div
+      id="table-visual"
+      className="bg-custom-dark-blue rounded-lg shadow-md overflow-hidden"
+    >
       {data.rows.length !== 0 && data.cols.length !== 0 && (
         <DataTable columns={columns(data.cols)} data={data.rows} />
       )}

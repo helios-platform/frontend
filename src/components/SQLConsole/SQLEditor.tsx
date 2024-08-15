@@ -20,7 +20,7 @@ const myDarkTheme = createTheme({
     selectionMatch: "#ff980033",
     gutterBackground: "#2d2e42",
     gutterForeground: "#8b8b8b",
-    fontSize: "16px",
+    fontSize: "24px",
     lineHighlight: "rgba(70,71,102,0.5)",
   },
   styles: [
@@ -73,12 +73,6 @@ const SQLEditor: React.FC<SQLEditorProps> = ({
   onKeyDown,
 }) => (
   <div>
-    <label
-      htmlFor="sql-queries"
-      className="mb-3 block text-sm font-medium text-gray-700"
-    >
-      SQL Queries
-    </label>
     <CodeMirror
       id="sql-queries"
       placeholder="Write query..."

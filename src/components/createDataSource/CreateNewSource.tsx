@@ -87,9 +87,9 @@ const CreateNewSource = () => {
       <StreamProvider>
         {/* <IntegrationProvider> */}
           <ol className=" overflow-hidden space-y-8">
-            <li className="relative flex-1 after:content-['']  after:w-0.5 after:h-full  after:bg-indigo-600 after:inline-block after:absolute after:-bottom-11 after:left-4 lg:after:left-5">
+            <li className="relative flex-1 after:content-['']  after:w-0.5 after:h-full  after:bg-custom-light-purple after:inline-block after:absolute after:-bottom-11 after:left-4 lg:after:left-5">
               <div className="flex items-start font-medium w-full">
-                <button className="w-8 h-8 aspect-square bg-indigo-600 border-2 border-transparent rounded-full flex justify-center items-center mr-3 text-sm text-white lg:w-10 lg:h-10">
+                <button className="w-8 h-8 aspect-square bg-custom-light-purple border-2 border-transparent rounded-full flex justify-center items-center mr-3 text-sm text-white lg:w-10 lg:h-10">
                   1
                 </button>
                 <SelectSourceType
@@ -100,7 +100,7 @@ const CreateNewSource = () => {
             </li>
             <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
               <div className="flex items-start font-medium w-full">
-                <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-indigo-600 rounded-full flex justify-center items-center mr-3 text-sm text-indigo-600 lg:w-10 lg:h-10">
+                <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-custom-light-purple rounded-full flex justify-center items-center mr-3 text-sm text-custom-light-purple lg:w-10 lg:h-10">
                   2
                 </button>
                 {/* <IntegrationProvider> */}
@@ -114,7 +114,7 @@ const CreateNewSource = () => {
             </li>
             <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
               <div className="flex items-start font-medium w-full">
-                <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-indigo-600 rounded-full flex justify-center items-center mr-3 text-sm text-indigo-600 lg:w-10 lg:h-10">
+                <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-custom-light-purple rounded-full flex justify-center items-center mr-3 text-sm text-custom-light-purple lg:w-10 lg:h-10">
                   3
                 </button>
                 {/* <StreamProvider> */}

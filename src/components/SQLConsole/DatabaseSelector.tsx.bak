@@ -1,0 +1,37 @@
+import React from "react";
+
+interface DatabaseSelectorProps {
+  databases: string[];
+  selectedDatabase: string;
+  onSelect: (database: string) => void;
+}
+
+const DatabaseSelector: React.FC<DatabaseSelectorProps> = ({
+  databases,
+  selectedDatabase,
+  onSelect,
+}) => (
+  <div>
+    <label
+      htmlFor="databases"
+      className="block text-sm font-medium text-custom-light-gray mb-2"
+    >
+      Databases
+    </label>
+    <select
+      id="databases"
+      className="mt-1 block w-full pl-3 pr-10 py-2 text-custom-light-gray bg-custom-dark-blue border border-custom-light-gray focus:outline-none focus:ring-2 focus:ring-custom-light-purple focus:border-custom-light-purple sm:text-sm rounded-md shadow-md"
+      value={selectedDatabase}
+      onChange={(e) => onSelect(e.target.value)}
+    >
+      {databases.map((database) => (
+        <option key={database} value={database}>
+          {database}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
+export default DatabaseSelector;
+
