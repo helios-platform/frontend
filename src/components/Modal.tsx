@@ -28,21 +28,21 @@ const Modal = ({ text, isOpen, onClose }) => {
   return (
       <dialog
         ref={dialogRef}
-        className="fixed left-[24%] right-[24%] top-[14%] flex items-center justify-center p-4 backdrop:bg-gray-800/50"
+        className="fixed left-[24%] right-[24%] top-[14%] flex items-center justify-center p-4 bg-transparent"
         onClick={handleClickOutside}
       >
-        <div className="bg-white rounded-lg flex flex-col max-h-[80vh]">
-          <div className="flex justify-between items-center border-b p-4">
-            <h3 className="text-lg font-semibold">AI Response</h3>
+        <div className="w-full max-w-screen bg-[#16233E] rounded-lg border border-custom-dark-blue shadow-medium backdrop-filter backdrop-blur-sm">
+          <div className="flex justify-between items-center border-b border-custom-dark-blue p-4">
+            <h3 className="text-lg font-semibold text-white">AI Response</h3>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-white hover:text-custom-light-purple transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-light-purple"
             >
               <X className="h-6 w-6" />
             </button>
           </div>
-          <div className="p-4 overflow-y-auto flex-grow">
-            <pre className="whitespace-pre-wrap break-words">{text}</pre>
+          <div className="p-4 overflow-y-auto max-h-[60vh]">
+            <pre className="whitespace-pre-wrap break-words text-white">{text}</pre>
           </div>
         </div>
       </dialog>

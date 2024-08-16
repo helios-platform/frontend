@@ -1,16 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root {
-  background-color: bg-amber-300;
-}
-
 /* CSS reset below, attribution joshcomeau.com */
 /*
   1. Use a more-intuitive box-sizing model.
 */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -24,7 +18,8 @@
 /*
   3. Allow percentage-based heights in the application
 */
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -41,7 +36,11 @@ body {
 /*
   6. Improve media defaults
 */
-img, picture, video, canvas, svg {
+img,
+picture,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
 }
@@ -49,20 +48,57 @@ img, picture, video, canvas, svg {
 /*
   7. Remove built-in form typography styles
 */
-input, button, textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
 }
 
 /*
   8. Avoid text overflows
 */
-p, h1, h2, h3, h4, h5, h6 {
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   overflow-wrap: break-word;
 }
 
 /*
   9. Create a root stacking context
 */
-#root, #__next {
+#root,
+#__next {
   isolation: isolate;
+}
+
+:root {
+  --shadow-color: 220deg 75% 3%;
+  --shadow-elevation-low: 0.6px 0.6px 1px hsl(var(--shadow-color) / 0.34),
+    1.1px 0.9px 1.6px -1.2px hsl(var(--shadow-color) / 0.34),
+    2.6px 2.3px 3.9px -2.5px hsl(var(--shadow-color) / 0.34);
+  --shadow-elevation-medium: 0.6px 0.6px 1px hsl(var(--shadow-color) / 0.36),
+    2.1px 1.9px 3.2px -0.8px hsl(var(--shadow-color) / 0.36),
+    5.3px 4.6px 7.9px -1.7px hsl(var(--shadow-color) / 0.36),
+    13px 11.3px 19.4px -2.5px hsl(var(--shadow-color) / 0.36);
+  --shadow-elevation-high: 0.6px 0.6px 1px hsl(var(--shadow-color) / 0.34),
+    3.8px 3.3px 5.7px -0.4px hsl(var(--shadow-color) / 0.34),
+    7px 6.2px 10.5px -0.7px hsl(var(--shadow-color) / 0.34),
+    11.6px 10.1px 17.3px -1.1px hsl(var(--shadow-color) / 0.34),
+    18.5px 16.2px 27.7px -1.4px hsl(var(--shadow-color) / 0.34),
+    28.9px 25.3px 43.2px -1.8px hsl(var(--shadow-color) / 0.34),
+    44px 38.4px 65.7px -2.1px hsl(var(--shadow-color) / 0.34),
+    64.8px 56.6px 96.8px -2.5px hsl(var(--shadow-color) / 0.34);
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  @apply bg-custom-dark-blue;
 }

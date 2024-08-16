@@ -1,11 +1,13 @@
-import { useState } from "react";
+import {useState} from 'react'
+
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getPaginationRowModel,
-} from "@tanstack/react-table";
+  getPaginationRowModel
+} from "@tanstack/react-table"
+
 import {
   Table,
   TableBody,
@@ -13,12 +15,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
-import { Button } from "../ui/button";
+} from "../ui/table"
+import { Button } from "../ui/button"
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
 }
 
 export function DataTable<TData, TValue>({
@@ -26,37 +28,38 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
+    pageIndex: 0, //initial page index
+    pageSize: 10, //default page size
   });
 
+  console.log({ data, columns })
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  });
+    getPaginationRowModel: getPaginationRowModel()
+    //manualPagination: true, //turn off client-side pagination
+  })
+
+  console.log('TABLE', table)
 
   return (
-    <div className="rounded-md border border-gray-600">
+    <div className="rounded-md border">
       <Table>
-        <TableHeader className="bg-custom-dark-gray">
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead
-                    key={header.id}
-                    className="text-custom-light-blue font-medium"
-                  >
+                  <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
-                );
+                )
               })}
             </TableRow>
           ))}
@@ -67,10 +70,9 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
-                className="hover:bg-custom-dark-gray transition-colors duration-150 ease-in-out border-b-0"
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="text-custom-light-gray">
+                  <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -78,36 +80,32 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="h-24 text-center text-custom-light-gray"
-              >
+              <TableCell colSpan={columns.length} className="h-24 text-center">
                 No results.
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
-      <div className="flex items-center justify-start space-x-4 py-4 px-4 bg-custom-dark-gray">
-        <Button
+      <div className="flex items-center justify-start space-x-2 py-4">
+        <button
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
-          className="px-2 py-1 rounded bg-custom-light-purple text-white disabled:opacity-50 hover:bg-custom-medium-purple"
+          className="px-2 py-1 border rounded"
         >
           Previous
-        </Button>
-        <span className="text-custom-light-gray px-2">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
+        </button>
+        <span>
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
         </span>
-        <Button
+        <button
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
-          className="px-2 py-1 rounded bg-custom-light-purple text-white disabled:opacity-50 hover:bg-custom-medium-purple"
+          className="px-2 py-1 border rounded"
         >
           Next
-        </Button>
+        </button>
       </div>
     </div>
-  );
+  )
 }

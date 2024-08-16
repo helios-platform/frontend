@@ -1,10 +1,10 @@
 // source @codepen.io/sarazond
 
 @function multiple-box-shadow ($n) {
-  $value: '#{random(2000)}px #{random(2000)}px #FFF';
+  $value: '#{random(100)}vw #{random(100)}vw #FFF';
 
   @for $i from 2 through $n {
-    $value: '#{$value} , #{random(2000)}px #{random(2000)}px #FFF';
+    $value: '#{$value} , #{random(100)}vw #{random(100)}vw #FFF';
   }
 
   @return unquote($value)

@@ -1,5 +1,4 @@
-import { useState } from "react";
-// import GridList from "./GridList";
+import React from "react";
 
 const sources = [
   {
@@ -14,55 +13,52 @@ const sources = [
   },
 ];
 
-interface selectSourceTypeProps {
+interface SelectSourceTypeProps {
   isActive: boolean;
   onClickSource: (source: string) => void;
 }
 
-const SelectSourceType = ({
+const SelectSourceType: React.FC<SelectSourceTypeProps> = ({
   isActive,
   onClickSource,
-}: selectSourceTypeProps) => {
+}) => {
   return (
-    <>
-      <div className="block">
-        <h4 className="text-base text-left text-indigo-600 mb-2 pt-2">
-          Select the data source
-        </h4>
-        {isActive && (
-          <ul
-            role="list"
-            className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-          >
-            {sources.map((source) => (
-              <li
-                key={source.name}
-                className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow hover:bg-slate-50 active:border-black active:border"
-                onClick={() => onClickSource(source.name)}
-              >
-                <div className="flex flex-1 flex-col p-8">
+    <div className="block">
+      {isActive && (
+        <ul
+          role="list"
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        >
+          {sources.map((source) => (
+            <li
+              key={source.name}
+              className="col-span-1 flex flex-col rounded-lg bg-custom-medium-blue text-center shadow-custom hover:shadow-glow transition-shadow duration-300 cursor-pointer"
+              onClick={() => onClickSource(source.name)}
+            >
+              <div className="flex flex-1 flex-col p-6">
+                <div className="flex items-center justify-center">
                   <img
                     alt=""
                     src={source.imageUrl}
-                    className="mx-auto h-32 w-32 flex-shrink-0 rounded"
+                    className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-lg object-contain"
                   />
-                  <h3 className="mt-6 text-sm font-medium text-gray-900">
-                    {source.name}
-                  </h3>
-                  <dl className="mt-1 flex flex-grow flex-col justify-between">
-                    <dd className="mt-3">
-                      <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                        {source.platform}
-                      </span>
-                    </dd>
-                  </dl>
                 </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </>
+                <h3 className="mt-4 text-sm font-medium text-custom-light-gray">
+                  {source.name}
+                </h3>
+                <dl className="mt-1 flex flex-grow flex-col justify-between">
+                  <dd className="mt-3">
+                    <span className="inline-flex items-center rounded-full bg-custom-green/20 px-2 py-1 text-xs font-medium text-custom-green ring-1 ring-inset ring-custom-green/30">
+                      {source.platform}
+                    </span>
+                  </dd>
+                </dl>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 };
 

@@ -11,7 +11,7 @@ const HomePage = () => {
         <div id="logo" className="flex justify-center mt-72 mb-20">
           <img
             alt="Helios"
-            src="./images/orangehelios.png"
+            src="./images/logo_whitestars_home.png"
             className="h-1/4 w-1/4 object-contain"
           />
         </div>
