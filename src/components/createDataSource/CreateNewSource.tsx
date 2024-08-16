@@ -4,209 +4,157 @@ import InputSourceDetails from "./InputSourceDetails";
 import ChooseStream from "./ChooseStream";
 import ConfirmSchema from "./ConfirmSchema";
 import DataSourceConfirmation from "./DataSourceConfirmation";
-import APIService from '../../api'
+import APIService from "../../api";
 import { CreateTable, InferredSchema, SampleEvent } from "../../types";
 import { StreamProvider } from "../../contexts/StreamContext";
 import { IntegrationProvider } from "../../contexts/IntegrationContext";
 import { FinalizedSchemaProvider } from "../../contexts/FinalizedSchemaContext";
 
-
-
 const CreateNewSource = () => {
-  const [error, setError] = useState(false)
-  const [isOneActive, setIsOneActive] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeStep, setActiveStep] = useState(1);
   const [source, setSource] = useState("");
-  const [isTwoActive, setIsTwoActive] = useState(false);
-  const [isThreeActive, setIsThreeActive] = useState(false);
-  const [isFourActive, setIsFourActive] = useState(false);
-  const [isFiveActive, setIsFiveActive] = useState(false);
-  const [streamNames, setStreamNames] = useState<string[]>([])
-  const [sampleEvent, setSampleEvent] = useState<SampleEvent>({})
-  const [inferredSchema, setInferredSchema] = useState<InferredSchema>([])
-
+  const [streamNames, setStreamNames] = useState<string[]>([]);
+  const [sampleEvent, setSampleEvent] = useState<SampleEvent>({});
+  const [inferredSchema, setInferredSchema] = useState<InferredSchema>([]);
 
   const handleClickSource = (sourceName: string) => {
     setSource(sourceName);
-    setIsOneActive(false);
-    setIsTwoActive(true);
+    setActiveStep(2);
   };
 
-  const handleNavigation = (
-    handler1: (value: boolean) => void,
-    handler2: (value: boolean) => void
-  ) => {
-    return () => {
-      handler1(false);
-      handler2(true);
-    };
+  const handleNavigation = (step: number) => {
+    setActiveStep(step);
+    setError(null);
   };
 
   const handleAuthenticate = async (accessKey: string, secretKey: string) => {
     try {
-      const data = await APIService.authenticate({ accessKey, secretKey })
+      const data = await APIService.authenticate({ accessKey, secretKey });
       if (data.authenticated) {
-        setStreamNames(data.streamNames)
-        handleNavigation(setIsTwoActive, setIsThreeActive)()
+        setStreamNames(data.streamNames);
+        handleNavigation(3);
+      } else {
+        setError("Authentication failed. Please check your credentials.");
       }
     } catch (error) {
-      console.error(error)
-      setError(true)
+      console.error(error);
+      setError("An error occurred during authentication.");
     }
-  }
+  };
 
   const handleInferSchema = async (streamName: string) => {
     try {
-      const data = await APIService.inferSchema({ streamName })
-      console.log(data)
+      const data = await APIService.inferSchema({ streamName });
       if (data) {
-        setInferredSchema(data.inferredSchema)
-        console.log(inferredSchema)
-        setSampleEvent(data.sampleEvent)
-        handleNavigation(setIsThreeActive, setIsFourActive)()
+        setInferredSchema(data.inferredSchema);
+        setSampleEvent(data.sampleEvent);
+        handleNavigation(4);
       }
     } catch (error) {
-      console.error(error)
-      setError(true)
+      console.error(error);
+      setError("An error occurred while inferring the schema.");
     }
-  }
+  };
 
-  const handleCreateTable = async ({ streamName, tableName, databaseName, schema }: CreateTable) => {
+  const handleCreateTable = async ({
+    streamName,
+    tableName,
+    databaseName,
+    schema,
+  }: CreateTable) => {
     try {
-      const data = await APIService.createTable({ streamName, tableName, databaseName, schema })
+      const data = await APIService.createTable({
+        streamName,
+        tableName,
+        databaseName,
+        schema,
+      });
       if (data && data.success) {
-        handleNavigation(setIsFourActive, setIsFiveActive)()
+        handleNavigation(5);
+      } else {
+        setError("Failed to create table. Please try again.");
       }
     } catch (error) {
-      console.error(error)
-      setError(true)
+      console.error(error);
+      setError("An error occurred while creating the table.");
     }
-  }
+  };
 
   return (
     <FinalizedSchemaProvider inferredSchema={inferredSchema}>
       <StreamProvider>
-        {/* <IntegrationProvider> */}
-          <ol className=" overflow-hidden space-y-8">
-            <li className="relative flex-1 after:content-['']  after:w-0.5 after:h-full  after:bg-custom-light-purple after:inline-block after:absolute after:-bottom-11 after:left-4 lg:after:left-5">
-              <div className="flex items-start font-medium w-full">
-                <button className="w-8 h-8 aspect-square bg-custom-light-purple border-2 border-transparent rounded-full flex justify-center items-center mr-3 text-sm text-white lg:w-10 lg:h-10">
+        <IntegrationProvider>
+          <div className="container mx-auto px-4 py-8 bg-custom-dark-blue text-custom-light-gray">
+            <ol className="relative space-y-8 before:absolute before:left-4 before:top-4 before:h-[calc(100%-32px)] before:w-0.5 before:bg-custom-light-purple">
+              <li className="relative pl-12">
+                <div className="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-custom-light-purple text-white">
                   1
-                </button>
+                </div>
                 <SelectSourceType
-                  isActive={isOneActive}
+                  isActive={activeStep === 1}
                   onClickSource={handleClickSource}
                 />
-              </div>
-            </li>
-            <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
-              <div className="flex items-start font-medium w-full">
-                <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-custom-light-purple rounded-full flex justify-center items-center mr-3 text-sm text-custom-light-purple lg:w-10 lg:h-10">
+              </li>
+              <li className="relative pl-12">
+                <div
+                  className={`absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full ${activeStep >= 2 ? "bg-custom-light-purple" : "bg-custom-medium-blue"} text-white`}
+                >
                   2
-                </button>
-                {/* <IntegrationProvider> */}
+                </div>
                 <InputSourceDetails
-                  isActive={isTwoActive}
-                  onClickBack={handleNavigation(setIsTwoActive, setIsOneActive)}
+                  isActive={activeStep === 2}
+                  onClickBack={() => handleNavigation(1)}
                   onAuthenticate={handleAuthenticate}
                 />
-                {/* </IntegrationProvider> */}
-              </div>
-            </li>
-            <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
-              <div className="flex items-start font-medium w-full">
-                <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-custom-light-purple rounded-full flex justify-center items-center mr-3 text-sm text-custom-light-purple lg:w-10 lg:h-10">
+              </li>
+              <li className="relative pl-12">
+                <div
+                  className={`absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full ${activeStep >= 3 ? "bg-custom-light-purple" : "bg-custom-medium-blue"} text-white`}
+                >
                   3
-                </button>
-                {/* <StreamProvider> */}
+                </div>
                 <ChooseStream
-                  isActive={isThreeActive}
-                  onClickBack={handleNavigation(setIsThreeActive, setIsTwoActive)}
+                  isActive={activeStep === 3}
+                  onClickBack={() => handleNavigation(2)}
                   onInferSchema={handleInferSchema}
                   streamNames={streamNames}
                 />
-                {/* </StreamProvider> */}
-
-              </div>
-            </li>
-            <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
-              <div className="flex items-start font-medium w-full">
-                <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-indigo-600 rounded-full flex justify-center items-center mr-3 text-sm text-indigo-600 lg:w-10 lg:h-10">
+              </li>
+              <li className="relative pl-12">
+                <div
+                  className={`absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full ${activeStep >= 4 ? "bg-custom-light-purple" : "bg-custom-medium-blue"} text-white`}
+                >
                   4
-                </button>
-
+                </div>
                 <ConfirmSchema
-                  isActive={isFourActive}
-                  onClickBack={handleNavigation(setIsFourActive, setIsThreeActive)}
+                  isActive={activeStep === 4}
+                  onClickBack={() => handleNavigation(3)}
                   onCreateTable={handleCreateTable}
-                //sampleEvent={sampleEvent}
                 />
-
-
-              </div>
-            </li>
-            <li className="relative flex-1 after:content-[''] z-10  after:w-0.5 after:h-full after:z-0 after:bg-gray-200 after:inline-block after:absolute after:-bottom-12 after:left-4 lg:after:left-5">
-              <div className="flex items-start font-medium w-full">
-                <button className="w-8 h-8 bg-indigo-50 relative z-20 border-2 border-indigo-600 rounded-full flex justify-center items-center mr-3 text-sm text-indigo-600 lg:w-10 lg:h-10">
+              </li>
+              <li className="relative pl-12">
+                <div
+                  className={`absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full ${activeStep >= 5 ? "bg-custom-light-purple" : "bg-custom-medium-blue"} text-white`}
+                >
                   5
-                </button>
+                </div>
                 <DataSourceConfirmation
-                  isActive={isFiveActive}
+                  isActive={activeStep === 5}
                   onClick={() => null}
                 />
+              </li>
+            </ol>
+            {error && (
+              <div className="mt-4 text-red-500 bg-red-100 border border-red-400 rounded p-2">
+                {error}
               </div>
-            </li>
-          </ol>
-        {/* </IntegrationProvider> */}
+            )}
+          </div>
+        </IntegrationProvider>
       </StreamProvider>
     </FinalizedSchemaProvider>
   );
 };
 
 export default CreateNewSource;
-
-
-// const handleTwoClickBack = () => {
-//   setIsTwoActive(false);
-//   setIsOneActive(true);
-// };
-
-// const handleTwoClickNext = () => {
-//   setIsTwoActive(false);
-//   setIsThreeActive(true);
-// };
-
-// const handleThreeClickBack = () => {
-//   setIsThreeActive(false);
-//   setIsTwoActive(true);
-// };
-
-// const handleThreeClickNext = () => {
-//   setIsThreeActive(false);
-//   setIsFourActive(true);
-// };
-
-// const handleNavigation = ({handler1, handler2}: handleNavigationProps) => {
-//   return () => {
-//     handler1(false);
-//     handler2(true);
-//   };
-// };
-
-
-// interface handleNavigationProps {
-//   handler1: (value1: boolean) => void;
-//   handler2: (value1: boolean) => void;
-// }
-
-{/* <InputSourceDetails
-  isActive={isTwoActive}
-  onClickBack={handleTwoClickBack}
-  onClickNext={handleTwoClickNext}
-/> */}
-
-{/* <ChooseStream
-  isActive={isThreeActive}
-  onClickBack={handleThreeClickBack}
-  onClickNext={handleThreeClickNext}
-/> */}
-

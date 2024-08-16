@@ -21,8 +21,8 @@ const SQLConsole: React.FC = () => {
 
   return (
     <div className="p-8 w-full bg-custom-dark-blue">
-      <div className="max-w-screen mx-auto bg-custom-dark-gray bg-opacity-90 rounded-lg p-6 border border-gray-600 shadow-high backdrop-filter backdrop-blur-sm">
-        <div className="grid grid-cols-4 gap-4 mb-6 items-center">
+      <div className="max-w-screen mx-auto bg-custom-medium-blue bg-opacity-90 rounded-lg p-6 border border-custom-dark-blue shadow-high backdrop-filter backdrop-blur-sm">
+        <div className="grid grid-cols-4 gap-4 mb-6 items-end">
           <Selector
             options={Object.keys(instanceInfo)}
             selectedOption={selectedInfo.database}

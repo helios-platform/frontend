@@ -17,10 +17,10 @@ function App() {
             <HomePage />
           </Route>
           <Route>
-            <div className="w-screen h-screen">
+            <div className="flex">
               <SideNav />
-              <div className="lg:pl-72 py-10">
-                <div className="px-4 sm:px-6 lg:px-8">
+              <div className="flex-1 lg:ml-80 mt-20 lg:mt-0">
+                <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
                   <Switch>
                     <Route path="/sql-dashboard">
                       <SQLConsole />

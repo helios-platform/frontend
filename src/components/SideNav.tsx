@@ -67,7 +67,7 @@ const SideNav = () => {
   return (
     <>
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-80 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-custom-dark-gray shadow-lg shadow-custom-light-purple/10">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-custom-medium-blue shadow-lg shadow-custom-light-purple/10">
           <div className="flex h-48 shrink-0 items-center justify-center mt-8">
             <img
               className="h-48 w-auto"
@@ -95,10 +95,10 @@ const SideNav = () => {
         </div>
       </div>
 
-      <div className="lg:hidden fixed top-0 left-0 z-50 w-full bg-custom-dark-gray p-4 flex justify-between items-center shadow-md">
+      <div className="lg:hidden fixed top-0 left-0 z-50 w-full bg-custom-medium-blue p-4 flex justify-between items-center shadow-md">
         <img
-          className="h-12 w-auto"
-          src="./images/orangehelios.png"
+          className="h-16 w-auto"
+          src="./images/logo_whitestars.png"
           alt="Helios"
         />
         <button
@@ -120,11 +120,11 @@ const SideNav = () => {
       <div
         className={classNames(
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
-          "lg:hidden fixed inset-y-0 left-0 z-40 w-64 bg-custom-dark-gray py-20 transition-transform duration-300 ease-in-out shadow-lg shadow-custom-light-purple/10",
+          "lg:hidden fixed inset-y-0 left-0 z-40 w-64 bg-custom-medium-blue py-20 transition-transform duration-300 ease-in-out shadow-lg shadow-custom-light-purple/10",
         )}
       >
         <nav className="flex flex-col h-full">
-          <div className="flex-1 mt-4">
+          <div className="flex-1 mt-6">
             <div className="space-y-1">
               <NavItems mobile />
             </div>

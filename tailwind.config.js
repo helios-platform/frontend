@@ -36,6 +36,7 @@ module.exports = {
       },
       colors: {
         "custom-dark-blue": "#0f182a",
+        "custom-medium-blue": "hsl(220deg 48% 18% / 80%)",
         "custom-dark-gray": "#334155",
         // "custom-dark-gray": "#1f2937", // darker
         "custom-light-purple": "#6366f1",
