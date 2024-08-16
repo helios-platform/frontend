@@ -5,6 +5,8 @@ import QuarantineTableForm from "./QuarantineTableForm";
 import { useEffect, useRef, useState } from "react";
 import queryService from "../api";
 import { mkConfig, generateCsv, download } from "export-to-csv";
+import { Menu } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 const QuarantineTablePage = () => {
   const [selectedInfo, setSelectedInfo] = useState({
@@ -83,8 +85,7 @@ const QuarantineTablePage = () => {
     download(csvConfig)(csv);
   };
 
-  const handleTableSelect = async (e: React.SyntheticEvent) => {
-    const table = e.target.value;
+  const handleTableSelect = async (table) => {
     setSelectedInfo((prevState) => {
       const newState = {
         ...prevState,
@@ -101,23 +102,43 @@ const QuarantineTablePage = () => {
   ));
 
   const quarantineTableSelector = (
-    <>
+    <div>
       <label
         htmlFor="tables"
-        className="block text-sm font-medium text-gray-700"
+        className="block text-sm font-medium text-custom-light-gray mb-2"
       >
         Quarantine Tables
       </label>
-      <select
-        id="tables"
-        name="tables"
-        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-        onChange={handleTableSelect}
-        value={selectedInfo.table || ""}
-      >
-        {tableOptions}
-      </select>
-    </>
+      <Menu as="div" className="relative inline-block text-left w-full">
+        <Menu.Button className="inline-flex w-full justify-between items-center rounded-md bg-custom-dark-blue px-4 py-2 text-sm font-medium text-custom-light-gray shadow-glow ring-1 ring-inset ring-custom-light-blue hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+          {selectedInfo.table || "Select Table"}
+          <ChevronDownIcon
+            className="ml-2 -mr-1 h-5 w-5 text-custom-light-blue"
+            aria-hidden="true"
+          />
+        </Menu.Button>
+        <Menu.Items className="absolute z-10 mt-2 w-full origin-top-right rounded-md bg-custom-dark-blue shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <div className="px-1 py-1">
+            {selectedInfo.tableOptions.map((table) => (
+              <Menu.Item key={table}>
+                {({ active }) => (
+                  <button
+                    className={`${
+                      active
+                        ? "bg-custom-light-purple text-white"
+                        : "text-custom-light-gray"
+                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    onClick={() => handleTableSelect(table)}
+                  >
+                    {table}
+                  </button>
+                )}
+              </Menu.Item>
+            ))}
+          </div>
+        </Menu.Items>
+      </Menu>
+    </div>
   );
 
   const formattedColumns = columns(tableInfo.cols);
@@ -140,8 +161,8 @@ const QuarantineTablePage = () => {
 
   return (
     <>
-      <div className="p-8 w-full">
-        <div className="max-w-screen mx-auto bg-white shadow-lg rounded-lg p-6 border border-gray-200">
+      <div className="p-8 w-full bg-custom-dark-blue">
+        <div className="max-w-screen mx-auto bg-custom-medium-blue bg-opacity-90 shadow-high rounded-lg p-6 border border-custom-dark-gray backdrop-filter backdrop-blur-sm">
           <QuarantineTableForm
             handleFilter={fetchTableData}
             handleCloseModal={handleCloseModal}
@@ -152,18 +173,21 @@ const QuarantineTablePage = () => {
             isModalOpen={isModalOpen}
             exportToCSV={exportToCSV}
           />
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-4 mt-6">
             <div>
               <label
                 htmlFor="table-visual"
-                className="mb-3 block text-sm font-medium text-gray-700"
+                className="mb-3 block text-lg font-medium text-custom-light-gray"
               >
                 Table Visual{" "}
-                <span className="text-gray-500">
+                <span className="text-custom-light-blue">
                   - {tableInfo.row_count} rows
                 </span>
               </label>
-              <div id="table-visual">
+              <div
+                id="table-visual"
+                className="bg-custom-dark-blue rounded-lg shadow-md overflow-hidden"
+              >
                 {tableInfo.rows.length !== 0 && tableInfo.cols.length !== 0 && (
                   <DataTable
                     columns={formattedColumns}
@@ -180,4 +204,3 @@ const QuarantineTablePage = () => {
 };
 
 export default QuarantineTablePage;
-

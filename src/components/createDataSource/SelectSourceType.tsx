@@ -5,34 +5,29 @@ const sources = [
     name: "Amazon Kinesis",
     platform: "AWS",
     imageUrl: "./images/amazon-kinesis.svg",
-    // color: "bg-indigo-600",
   },
   {
     name: "Amazon S3",
     platform: "AWS",
     imageUrl: "./images/amazon-s3.svg",
-    // color: "bg-green-600",
   },
 ];
 
-interface selectSourceTypeProps {
+interface SelectSourceTypeProps {
   isActive: boolean;
   onClickSource: (source: string) => void;
 }
 
-const SelectSourceType: React.FC<selectSourceTypeProps> = ({
+const SelectSourceType: React.FC<SelectSourceTypeProps> = ({
   isActive,
   onClickSource,
 }) => {
   return (
     <div className="block">
-      <h4 className="text-lg font-semibold text-left text-custom-light-purple mb-4">
-        Select the data source
-      </h4>
       {isActive && (
         <ul
           role="list"
-          className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         >
           {sources.map((source) => (
             <li
@@ -40,17 +35,15 @@ const SelectSourceType: React.FC<selectSourceTypeProps> = ({
               className="col-span-1 flex flex-col rounded-lg bg-custom-medium-blue text-center shadow-custom hover:shadow-glow transition-shadow duration-300 cursor-pointer"
               onClick={() => onClickSource(source.name)}
             >
-              <div className="flex flex-1 flex-col p-8">
-                <div
-                  className={`mx-auto h-32 w-32 flex-shrink-0 rounded-lg ${source.color} flex items-center justify-center`}
-                >
+              <div className="flex flex-1 flex-col p-6">
+                <div className="flex items-center justify-center">
                   <img
                     alt=""
                     src={source.imageUrl}
-                    className="h-32 w-32 rounded-lg"
+                    className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-lg object-contain"
                   />
                 </div>
-                <h3 className="mt-6 text-sm font-medium text-custom-light-gray">
+                <h3 className="mt-4 text-sm font-medium text-custom-light-gray">
                   {source.name}
                 </h3>
                 <dl className="mt-1 flex flex-grow flex-col justify-between">

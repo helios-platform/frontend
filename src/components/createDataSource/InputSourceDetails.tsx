@@ -74,10 +74,6 @@ const InputSourceDetails: React.FC<InputSourceDetailsProps> = ({
       className="block w-full max-w-3xl"
       onSubmit={handleSubmit}
     >
-      <h4 className="text-lg font-semibold text-left text-custom-light-purple mb-4">
-        Setup Connection
-      </h4>
-
       {isActive && (
         <div className="mt-6 bg-custom-medium-blue p-6 rounded-lg shadow-custom">
           <div className="space-y-6">

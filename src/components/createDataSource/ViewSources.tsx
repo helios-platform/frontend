@@ -102,11 +102,11 @@ const ViewSources: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto py-10 bg-custom-dark-blue shadow-lg rounded-lg">
-      <h1 className="text-2xl font-bold mb-4 text-custom-light-purple">
+    <div className="container mx-auto pt-6 pb-10 bg-custom-medium-blue shadow-lg rounded-lg">
+      <h1 className="text-2xl font-bold mb-6 text-custom-light-purple rounded-md">
         Connections
       </h1>
-      <div className="rounded-md border border-custom-light-blue/30">
+      <div className="rounded-md border border-custom-medium-blue shadow-medium">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -163,4 +163,3 @@ const ViewSources: React.FC = () => {
 };
 
 export default ViewSources;
-

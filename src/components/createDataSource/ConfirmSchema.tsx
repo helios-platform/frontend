@@ -44,9 +44,6 @@ const ConfirmSchema: React.FC<ConfirmSchemaProps> = ({
 
   return (
     <form className="block w-full max-w-4xl" onSubmit={handleSubmit}>
-      <h4 className="text-lg font-semibold text-left text-custom-light-purple mb-4">
-        Confirm Schema
-      </h4>
       {isActive && (
         <div className="mt-6 bg-custom-medium-blue p-6 rounded-lg shadow-custom">
           <SchemaTable />

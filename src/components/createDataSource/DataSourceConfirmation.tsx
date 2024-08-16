@@ -13,9 +13,6 @@ const DataSourceConfirmation: React.FC<DataSourceConfirmationProps> = ({
 
   return (
     <div className="block w-full max-w-3xl">
-      <h4 className="text-lg font-semibold text-left text-custom-light-purple mb-4">
-        Data Source Confirmation
-      </h4>
       {isActive && (
         <div className="mt-6 bg-custom-medium-blue p-6 rounded-lg shadow-custom">
           <p className="text-custom-light-gray mb-6">
