@@ -1,30 +1,29 @@
-# React + TypeScript + Vite
+## Overview
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Helios' user interface is built with [React](https://reactjs.org/),
+[React Router](https://reactrouter.com/en/main), [Tailwind](https://tailwindcss.com/)
+[TypeScript](https://www.typescriptlang.org/), [Zod](https://github.com/colinhacks/zod) and [Vite](https://vitejs.dev/).
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### SQL Console
 
-## Expanding the ESLint configuration
+The SQL Console provides users with an interactive environment to write and execute SQL queries against their Kinesis stream data. It features a code editor with syntax highlighting for SQL and users can execute queries with a single click and view results in a tabular format. Users can download the results of any SQL query as a CSV file. The CSV export feature ensures that insights gained from Helios can be easily shared and incorporated into broader analytical processes.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+![SQL Console](https://github.com/helios-pipeline/case-study/blob/main/docs/public/case_study/webapp.png)
 
-- Configure the top-level `parserOptions` property like this:
+### Data Source Connection
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+Helios simplifies the process of connecting to existing Amazon Kinesis streams. Through an intuitive interface, users can input their AWS credentials and select the Kinesis streams they wish to analyze. This feature acts as a bridge between the user's AWS infrastructure and Helios, enabling seamless data flow for analysis. It's important to note that Helios does not manage or modify the Kinesis streams themselves; it simply provides a read-only connection for data analysis purposes.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+![Data Source Connection](./public/images/data-source-connection-screenshot.png)
+
+### Real-time Analytics
+
+The real-time analytics feature of Helios leverages the power of ClickHouse to provide low-latency querying capabilities. Users can perform analytical queries on their streaming data and receive results within seconds. The real-time nature of Helios allows for immediate insights, enabling quick decision-making based on the most current data.
+
+### Quarantine Table
+
+The Quarantine Table is a crucial component for data quality management in Helios. It provides a dedicated space to view and analyze events that failed to process correctly. Users can examine the details of these problematic events, including the nature of the error and the original event data. The Quarantine Table also supports exporting of error data to a CSV for offline analysis or reporting.
+
+![Quarantine Table](./public/images/quarantine-table-screenshot.png)
