@@ -17,12 +17,16 @@ import {
   SourcesResponseSchema,
   RawSourceDataSchema,
   TransformedSourceDataSchema,
+  APIKeyResponse,
+  APIKeyResponseSchema,
+  APIOutputResponseSchema,
+  ErrorResponseSchema,
+  APIOutputResponse
 } from '../types';
 
 const API_URL = '/api';
 
 // /api/databases
-
 const listDatabases = async (): Promise<DatabasesResponse> => {
   try {
     const { data } = await axios.get<DatabasesResponse>(`${API_URL}/databases`);
@@ -125,4 +129,33 @@ const listSources = async (): Promise<SourcesResponse | undefined> => {
   }
 };
 
-export default { listDatabases, executeQuery, authenticate, inferSchema, createTable, listSources }
+export const fetchAPIKey = async (): Promise<APIKeyResponse | undefined> => {
+  try {
+    const { data } = await axios.get<APIKeyResponse>(`${API_URL}/api-key`);
+    return APIKeyResponseSchema.parse(data);
+  } catch(error) {
+    console.error('Error in fetchAPIKey: ', error);
+    return undefined;
+  }
+};
+
+export const viewAPIOutput = async (prompt: string): Promise<string> => {
+  try {
+    const response = await axios.post<APIOutputResponse>(`${API_URL}/api-response`, { prompt });
+    
+    if (response.status === 200 && response.data.response) {
+      return APIOutputResponseSchema.parse(response.data).response;
+    } else {
+      throw new Error(ErrorResponseSchema.parse(response.data).error || 'Failed to get API response');
+    }
+  } catch (error) {
+    console.error('Error in viewAPIOutput:', error);
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(ErrorResponseSchema.parse(error.response.data).error || 'Failed to get API response');
+    } else {
+      throw new Error('An unexpected error occurred');
+    }
+  }
+};
+
+export default { listDatabases, executeQuery, authenticate, inferSchema, createTable, listSources, fetchAPIKey, viewAPIOutput }
