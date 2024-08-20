@@ -1,17 +1,8 @@
-## Helios Frontend
+## Overview
 
 Helios' user interface is built with [React](https://reactjs.org/),
 [React Router](https://reactrouter.com/en/main), [Tailwind](https://tailwindcss.com/)
 [TypeScript](https://www.typescriptlang.org/), [Zod](https://github.com/colinhacks/zod) and [Vite](https://vitejs.dev/).
-
-<details>
-  <summary><strong>⚠️ Warning: Running Locally</strong></summary>
-  <div>
-
-Please note that running this backend application locally is not recommended, as it is designed to work with specific AWS infrastructure. To provision the complete Helios system and utilize this backend effectively, please refer to the [Helios Deploy](https://github.com/helios-pipeline/deploy) documentation.
-
-  </div>
-</details>
 
 ## Features
 
