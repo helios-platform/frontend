@@ -133,3 +133,18 @@ export type FinalizedSchemaContextType = z.infer<
   typeof FinalizedSchemaContextTypeSchema
 >;
 
+export const APIKeyResponseSchema = z.object({
+  api_key: z.string(),
+});
+
+export const APIOutputResponseSchema = z.object({
+  response: z.string(),
+});
+
+export const ErrorResponseSchema = z.object({
+  error: z.string(),
+});
+
+export type APIKeyResponse = z.infer<typeof APIKeyResponseSchema>;
+export type APIOutputResponse = z.infer<typeof APIOutputResponseSchema>;
+export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;

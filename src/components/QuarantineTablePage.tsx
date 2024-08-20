@@ -146,13 +146,14 @@ const QuarantineTablePage = () => {
   const handleAIButton = async (e) => {
     setIsModalOpen(true);
     setAiResponseText("Generating error analysis...");
-    const text = await fetchOpenAIOutput(
-      JSON.stringify({ cols: tableInfo.cols, rows: tableInfo.rows }).slice(
-        0,
-        1000,
-      ),
-    );
-    setAiResponseText(text);
+    try {
+      const prompt = JSON.stringify({ cols: tableInfo.cols, rows: tableInfo.rows }).slice(0, 1000);
+      const text = await queryService.viewAPIOutput(prompt);
+      setAiResponseText(text);
+    } catch (error) {
+      console.error('Error in handleAIButton:', error);
+      setAiResponseText("Failed to generate error analysis. Please try again.");
+    }
   };
 
   const handleCloseModal = () => {

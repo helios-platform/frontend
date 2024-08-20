@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import queryService from "../api";
 import Modal from "./Modal";
 import { Menu } from "@headlessui/react";
@@ -20,6 +20,21 @@ const QuarantineTableFormTableForm = ({
   //const [endDate, setEndDate] = useState('');
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState("10");
+  const [isAPIKeyAvailable, setIsAPIKeyAvailable] = useState(false);
+
+  useEffect(() => {
+    const checkAPIKey = async () => {
+      try {
+        const result = await queryService.fetchAPIKey();
+        setIsAPIKeyAvailable(!!result && !!result.api_key);
+      } catch (error) {
+        console.error('Error checking API key:', error);
+        setIsAPIKeyAvailable(false);
+      }
+    };
+    
+    checkAPIKey();
+  }, []);
 
   const generateSQLQuery = (formData) => {
     let query = "SELECT ";
@@ -210,9 +225,14 @@ const QuarantineTableFormTableForm = ({
               Apply Filters
             </button>
             <button
-              className="px-3 py-2 text-sm bg-custom-light-purple hover:bg-custom-medium-purple text-white rounded-md transition duration-150 ease-in-out"
+              className={`px-3 py-2 text-sm bg-custom-light-purple text-white rounded-md transition duration-150 ease-in-out ${
+                isAPIKeyAvailable 
+                  ? "hover:bg-custom-medium-purple" 
+                  : "opacity-40 cursor-not-allowed"
+              }`}
               type="button"
               onClick={handleAIButton}
+              disabled={!isAPIKeyAvailable}
             >
               AI Error Analysis
             </button>
