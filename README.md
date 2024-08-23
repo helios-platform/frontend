@@ -1,7 +1,7 @@
 ## Overview
 
 Helios' user interface is built with [React](https://reactjs.org/),
-[React Router](https://reactrouter.com/en/main), [Tailwind](https://tailwindcss.com/)
+[React Router](https://reactrouter.com/en/main), [Tailwind](https://tailwindcss.com/),
 [TypeScript](https://www.typescriptlang.org/), [Zod](https://github.com/colinhacks/zod) and [Vite](https://vitejs.dev/).
 
 ## Features
@@ -16,7 +16,7 @@ The SQL Console provides users with an interactive environment to write and exec
 
 Helios simplifies the process of connecting to existing Amazon Kinesis streams. Through an intuitive interface, users can input their AWS credentials and select the Kinesis streams they wish to analyze. This feature acts as a bridge between the user's AWS infrastructure and Helios, enabling seamless data flow for analysis. It's important to note that Helios does not manage or modify the Kinesis streams themselves; it simply provides a read-only connection for data analysis purposes.
 
-![Data Source Connection](./public/images/data-source-connection-screenshot.png)
+![Data Source Connection](https://github.com/helios-platform/helios-platform.github.io/blob/main/docs/public/add_data_source.png)
 
 ### Real-time Analytics
 
@@ -26,4 +26,4 @@ The real-time analytics feature of Helios leverages the power of ClickHouse to p
 
 The Quarantine Table is a crucial component for data quality management in Helios. It provides a dedicated space to view and analyze events that failed to process correctly. Users can examine the details of these problematic events, including the nature of the error and the original event data. The Quarantine Table also supports exporting of error data to a CSV for offline analysis or reporting.
 
-![Quarantine Table](./public/images/quarantine-table-screenshot.png)
+![Quarantine Table](https://github.com/helios-platform/helios-platform.github.io/blob/main/docs/public/quarantine_table.png)
