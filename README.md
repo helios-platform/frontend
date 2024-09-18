@@ -18,10 +18,6 @@ Helios simplifies the process of connecting to existing Amazon Kinesis streams. 
 
 ![Data Source Connection](https://github.com/helios-platform/helios-platform.github.io/blob/main/docs/public/add_data_source.png)
 
-### Real-time Analytics
-
-The real-time analytics feature of Helios leverages the power of ClickHouse to provide low-latency querying capabilities. Users can perform analytical queries on their streaming data and receive results within seconds. The real-time nature of Helios allows for immediate insights, enabling quick decision-making based on the most current data.
-
 ### Quarantine Table
 
 The Quarantine Table is a crucial component for data quality management in Helios. It provides a dedicated space to view and analyze events that failed to process correctly. Users can examine the details of these problematic events, including the nature of the error and the original event data. The Quarantine Table also supports exporting of error data to a CSV for offline analysis or reporting.
